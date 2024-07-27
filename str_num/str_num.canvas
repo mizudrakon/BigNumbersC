@@ -1,0 +1,17 @@
+{
+	"nodes":[
+		{"id":"53c1e5dfae434e53","type":"text","text":"### part\nchar[100] data\nint partNumber\npart* next\npart* prev","x":50,"y":214,"width":258,"height":184},
+		{"id":"73f378e1a7aa3ef0","type":"text","text":"### str_num\npart\\* head\npart\\* tail\nint n_parts\nint n_tail_elements","x":20,"y":-96,"width":380,"height":196},
+		{"id":"8ede70676bfdb106","type":"text","text":"#### head\n","x":-280,"y":184,"width":250,"height":60},
+		{"id":"4aba0424864c7e91","type":"text","text":"#### tail","x":400,"y":184,"width":250,"height":60},
+		{"id":"f7f042faabcb8903","type":"text","text":"### read number\n* part\\* head = 1st part\n* continue creating parts and reading into them.\n* part\\* tail = laat part created","x":-720,"y":-226,"width":380,"height":260}
+	],
+	"edges":[
+		{"id":"ab2af1dbb2fab739","fromNode":"73f378e1a7aa3ef0","fromSide":"left","toNode":"8ede70676bfdb106","toSide":"left"},
+		{"id":"91ad304d0045add9","fromNode":"73f378e1a7aa3ef0","fromSide":"right","toNode":"4aba0424864c7e91","toSide":"top"},
+		{"id":"9e5e45719bb2b068","fromNode":"4aba0424864c7e91","fromSide":"left","toNode":"53c1e5dfae434e53","toSide":"right"},
+		{"id":"fe2b382b6bce28a5","fromNode":"8ede70676bfdb106","fromSide":"right","toNode":"53c1e5dfae434e53","toSide":"left"},
+		{"id":"2ddb21ea1a802858","fromNode":"f7f042faabcb8903","fromSide":"right","toNode":"73f378e1a7aa3ef0","toSide":"top"},
+		{"id":"c1a93239e663f815","fromNode":"f7f042faabcb8903","fromSide":"bottom","toNode":"53c1e5dfae434e53","toSide":"bottom"}
+	]
+}
