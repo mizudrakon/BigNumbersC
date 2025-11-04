@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "str_number.h"
-#define TEST 
 #ifdef DEFS
 //test definitions
 #endif
@@ -39,20 +38,32 @@ int test_func(int limit, int (f)(STR_INT*,STR_INT*,STR_INT*), char op_sign, STR_
     }
 }
 
+void print_digits(int base, int range)
+{
+    printf("Digits for base %d:\n", base);
+    STR_INT* a = new_str_int(base,5);
+    for (int i = 0; i < range; i++)
+    {
+        // I need increase and decrease functions
+        printf("%d:\t%s", i, a);
+    }
+}
+
 int main(int argc, char** argv)
 {
 
+#define LIST_NUMS 
 #ifdef LIST_NUMS
     int b = 16;
     //char base = max_digit(b+1);
     /*the thing is: we usually need the max_digit which is 15, not the actual base which would be 16
      not sure if I should change the code to enter the actual base...*/
     for (int i = 1; i <= 40; i++)
-        printf("max digit for %d: %c\n", i, max_digit(i));
-    printf("list of all numeric characters for base %c:\n",base);
+        printf("max digit for base %d: %c\n", i, max_digit(i));
+    printf("list of all numeric characters for base %c:\n",b);
     for (int i = 1; i <= 140; i++){
-        if (is_digit(i,max_digit(base+1)))
-            printf("%c is digit for base %c = %d\n",i,max_digit(base+1),b);
+        if (is_digit(i,max_digit(b+1)))
+            printf("%c is digit for base %c = %d\n",i,max_digit(b+1),b);
     }
     putchar('\n');
 #endif

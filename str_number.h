@@ -115,5 +115,4 @@ int str_int_add(STR_INT* a, STR_INT* b, STR_INT* target);
 int str_int_minus(STR_INT* a, STR_INT* b, STR_INT* target);
 // target = a - b, success return 0, error return 1
 
-#include "str_number.c"
 #endif
