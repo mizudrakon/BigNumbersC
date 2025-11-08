@@ -5,37 +5,62 @@
 //test definitions
 #endif
 
-int test_func(int limit, int (f)(STR_INT*,STR_INT*,STR_INT*), char op_sign, STR_INT* a, STR_INT* b, STR_INT* c)
+void tests(int base, size_t len)
 {
-    for (int i = 0; i < limit; i++){
-        int bs;
-        printf("Insert base:");
-        scanf("\n%d",&bs);
-        char base = max_digit(bs+1);
-        printf("base is: %c\n", base);
-        a = new_str_int(bs,5);
-        print_str_int(a,stdout);
-        printf("enter number: ");
-        read_num(a, stdin);
-        printf("enter number: ");
-        b = new_str_int(bs,5);
-        read_num(b, stdin);
-        printf("regular print: \n");
-        printf("a:\n");
-        print_str_int(a,stdout);
-        printf("b:\n");
+    const sz = 2;
+    printf("Tests in base %d, partition length %d\n",base,len);
+    int (*func_array[sz])(STR_INT*,STR_INT*,STR_INT*) = {
+        &str_int_add,
+        &str_int_minus
+    };
+    char signs[sz] = {'+','-'};
+    STR_INT *a = new_str_int(base,len);
+    print_str_int(a,stdout);
+    printf("enter number: ");
+    read_num(a, stdin);
+    printf("enter number: ");
+    STR_INT *b = new_str_int(base,len);
+    read_num(b, stdin);
+    printf("regular print: \n");
+    printf("a:\n");
+    print_str_int(a,stdout);
+    printf("b:\n");
+    print_str_int(b,stdout);
+    for (int i = 0; i < sz; i++)
+    {
+        printf("a %c b:\n", signs[i]);
+        func_array[i](a,b,b);
         print_str_int(b,stdout);
-        printf("a %c b:\n", op_sign);
-        //STR_INT* c = new_str_int(bs,5);
-        f(a,b,b);
-        //str_int_add(a,b,b);
-        print_str_int(b,stdout);
-        printf("deleting a,b\n");
-        putchar('\n');
-        deleteSTR_INT(a);
-        deleteSTR_INT(b);
-        //deleteSTR_INT(c);
     }
+}
+
+/*  limit - repetitions
+    int (f)
+    op_sign
+    a, b, c
+*/
+int test_arithmetic(int limit, int (f)(STR_INT*,STR_INT*,STR_INT*), char op_sign, STR_INT* first, STR_INT* second, STR_INT* target)
+{
+    int bs;
+    printf("Insert base:");
+    scanf("\n%d",&bs);
+    char base = max_digit(bs+1);
+    printf("base is: %c\n", bs);
+    print_str_int(first,stdout);
+    printf("regular print: \n");
+    printf("first:\n");
+    print_str_int(first,stdout);
+    printf("second:\n");
+    print_str_int(second,stdout);
+    printf("first %c second:\n", op_sign);
+    //STR_INT* c = new_str_int(bs,5);
+    f(first,second,target);
+    //str_int_add(a,b,b);
+    print_str_int(target,stdout);
+    printf("deleting first,second,target\n");
+    putchar('\n');
+    deleteSTR_INT(first);
+    deleteSTR_INT(second);
 }
 
 void print_digits(int base, int range)
@@ -45,7 +70,8 @@ void print_digits(int base, int range)
     for (int i = 0; i < range; i++)
     {
         // I need increase and decrease functions
-        printf("%d:\t%s", i, a);
+        printf("%d:\n", i);
+        print_str_int(a, stdout);
     }
 }
 
