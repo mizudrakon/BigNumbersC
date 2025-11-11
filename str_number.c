@@ -6,22 +6,22 @@ int new_si_part(STR_INT* mom)
     STR_INT_PART* part;
     if ( (part = (STR_INT_PART*) malloc(sizeof(STR_INT_PART))) == NULL )
     {    printf("str_int_part basic malloc failed\n"); return 1;}
-    part->mother = mom;//assign mother
-    if (mom->head == NULL)//if mother doesn't have a head -> part is head
+    part->MOTHER = mom;//assign mother
+    if (mom->HEAD_ == NULL)//if mother doesn't have a head -> part is head
     {
-        mom->head = part;
-        part->prev = NULL;
+        mom->HEAD_ = part;
+        part->PREV = NULL;
     }
     else 
     {
-        part->prev = mom->tail;//new part's prev is mother's current tail
-        mom->tail->next = part;//the part becomes the new tail
+        part->PREV = mom->TAIL_;//new part's prev is mother's current tail
+        mom->TAIL_->NEXT = part;//the part becomes the new tail
     }
-    part->next = NULL;
-    mom->tail = part;
-    mom->totalParts++;//motehr now hes +1 part
-    part->partNumber = mom->totalParts;//the new part's number is the current total n/n
-    if ((part->data = (char*)malloc(mom->partSz * sizeof(char))) == NULL)//allocate storage
+    part->NEXT = NULL;
+    mom->TAIL_ = part;
+    mom->TOTAL_PARTS_++;//motehr now hes +1 part
+    part->PART_NUMBER = mom->TOTAL_PARTS_;//the new part's number is the current total n/n
+    if ((part->DATA = (char*)malloc(mom->PARTSZ_ * sizeof(char))) == NULL)//allocate storage
     {    printf("str_int_part data malloc failed\n"); return 1;}
     return 0;//no failure
 }
@@ -31,20 +31,20 @@ STR_INT* new_str_int(char base, size_t part_len)
     STR_INT* strnum;
     if ((strnum = (STR_INT*) malloc(sizeof(STR_INT))) == NULL)//allocate struct
         printf("new_str_int malloc failed\n");
-    strnum->partSz = part_len;
-    strnum->base = base;
-    strnum->head = NULL;
+    strnum->PARTSZ_ = part_len;
+    strnum->BASE_ = base;
+    strnum->HEAD_ = NULL;
     //create the first part that is both head and tail
     if (new_si_part(strnum))
     {
         fprintf(stderr, "failed creating a new string_int_part!");
         return NULL;
     }//no prev or next yet
-    strnum->tail = strnum->head;
+    strnum->TAIL_ = strnum->HEAD_;
     //we want init as 0 to be safe-r...
-    strnum->tailLength = 1;
-    strnum->head->data[0] = 0;
-    strnum->end = strnum->head->data+1;
+    strnum->TAIL_LENGTH_ = 1;
+    strnum->HEAD_->DATA[0] = 0;
+    strnum->END_ = strnum->HEAD_->DATA+1;
     return strnum;
 }
 
@@ -319,7 +319,7 @@ void formated_print_str_int(STR_INT* num, FILE* f, char brk, size_t line_len)//p
 void backward_print_str_int(STR_INT* num, FILE* f, int brk, size_t line_len)
 {
     int fin = 0;
-    for (STR_INT_PART* part_it = num->head; part_it != NULL; part_it = part_it->next)
+    for (STR_INT_PART* part_it = num->HEAD_; part_it != NULL; part_it = part_it->next)
     {   
         int i = 0;
         if (fin) break;

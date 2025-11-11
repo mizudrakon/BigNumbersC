@@ -8,26 +8,28 @@
  it also has a pointer to it's mother which is the str_int struct defined next*/
 typedef struct str_int_part 
 {
-    size_t partNumber;//it a kth part in str_int::totalParts
-    struct str_int_part* prev;
-    struct str_int_part* next;
-    struct str_int* mother;//pointer to str_int struct that collects the overlaying info
-    char* data;//number characters stuffed into the part
+    size_t PART_NUMBER;//it a kth part in str_int::totalParts
+    struct str_int_part* PREV;
+    struct str_int_part* NEXT;
+    struct str_int* MOTHER;//pointer to str_int struct that collects the overlaying info
+    char* DATA;//number characters stuffed into the part
 } STR_INT_PART;
 
 //structure with all info about the str_int coupled in
 typedef struct str_int
 {
-    size_t totalParts;//number of str_int_parts in total
-    size_t tailLength;//how far is the last part of allocated memory filled
-    char* end;
-    size_t partSz;//size of a single part
+    char BASE_;//numeric base of the number
+    size_t TOTAL_PARTS_;//number of str_int_parts in total
+    size_t PARTSZ_;//size of a single part
+    size_t TAIL_LENGTH_;//how far is the last part of allocated memory filled
     //-> so the length of the whole number is totlaParts * partSz + lastPartLength
-    char base;//numeric base of the number
     //pointers to first and last part:
-    STR_INT_PART* head;
-    STR_INT_PART* tail;
+    STR_INT_PART* HEAD_;
+    STR_INT_PART* TAIL_;
+    char* END_;
 } STR_INT;
+
+// ^CONSTRUCTORS
 
 int new_si_part(STR_INT* mom);
 /*create new str_int_part = c array that we can read the number into
@@ -65,6 +67,8 @@ int iterator_fw(STR_INT_ITERATOR* it);
 
 int iterator_bw(STR_INT_ITERATOR* it);
 //move iterator towards the begin
+
+// $CONSTRUCTORS
 
 int it_eq(const STR_INT_ITERATOR* a, const STR_INT_ITERATOR* b);
 //do iterators point to the same thing?
