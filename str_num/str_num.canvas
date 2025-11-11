@@ -1,9 +1,9 @@
 {
 	"nodes":[
-		{"id":"53c1e5dfae434e53","type":"text","text":"### part\nchar[100] data\nint partNumber\npart* next\npart* prev","x":50,"y":214,"width":258,"height":184},
-		{"id":"73f378e1a7aa3ef0","type":"text","text":"### STR_INT\nchar BASE\\_\nsize\\_t TOTAL\\_PARTS\\_\nsize\\_t PARTSZ\nsize\\_t TAIL\\_LENGTH\\_\nSTR\\_INT\\_PART\\* HEAD\\_\nSTR\\_INT\\_PART\\* TAIL\\_\nchar* END\\_","x":20,"y":-96,"width":380,"height":196},
-		{"id":"8ede70676bfdb106","type":"text","text":"#### head\n","x":-280,"y":184,"width":250,"height":60},
-		{"id":"4aba0424864c7e91","type":"text","text":"#### tail","x":400,"y":184,"width":250,"height":60},
+		{"id":"53c1e5dfae434e53","type":"text","text":"### STR\\_INT\\_PART\nchar[PARTSZ] DATA\nsize\\_t PART\\_NUMBER\nSTR\\_INT\\_PART\\* NEXT\nSTR\\_INT\\_PART\\* PREV\nSTR\\_INT\\* MOTHER\n","x":70,"y":220,"width":258,"height":184},
+		{"id":"73f378e1a7aa3ef0","type":"text","text":"### STR\\_INT\nchar BASE\\_\nsize\\_t TOTAL\\_PARTS\\_\nsize\\_t PARTSZ\nsize\\_t TAIL\\_LENGTH\\_\nSTR\\_INT\\_PART\\* HEAD\\_\nSTR\\_INT\\_PART\\* TAIL\\_\nchar* END\\_","x":20,"y":-96,"width":380,"height":256},
+		{"id":"8ede70676bfdb106","type":"text","text":"#### HEAD\\_\n- the __least significant part__ of STR\\_INT\n","x":-280,"y":200,"width":250,"height":96},
+		{"id":"4aba0424864c7e91","type":"text","text":"#### TAIL_\n- __most significant part__ of STR_INT\nchar* END\\_\n- points to the next to last occupied position","x":400,"y":184,"width":250,"height":156},
 		{"id":"f7f042faabcb8903","type":"text","text":"### read number\n* part\\* head = 1st part\n* continue creating parts and reading into them.\n* part\\* tail = laat part created","x":-720,"y":-226,"width":380,"height":260}
 	],
 	"edges":[

@@ -1,5 +1,5 @@
 #include "str_number.h"
-
+//^CONSTRUCTOR
 //this adds a new part to a specified mother, does it need to return a pointer?
 int new_si_part(STR_INT* mom)
 {
@@ -7,7 +7,7 @@ int new_si_part(STR_INT* mom)
     if ( (part = (STR_INT_PART*) malloc(sizeof(STR_INT_PART))) == NULL )
     {    printf("str_int_part basic malloc failed\n"); return 1;}
     part->MOTHER = mom;//assign mother
-    if (mom->HEAD_ == NULL)//if mother doesn't have a head -> part is head
+    if (mom->HEAD_ == NULL)//if mother doesn't have a HEAD_ -> part is HEAD_
     {
         mom->HEAD_ = part;
         part->PREV = NULL;
@@ -34,7 +34,7 @@ STR_INT* new_str_int(char base, size_t part_len)
     strnum->PARTSZ_ = part_len;
     strnum->BASE_ = base;
     strnum->HEAD_ = NULL;
-    //create the first part that is both head and tail
+    //create the first part that is both HEAD_ and tail
     if (new_si_part(strnum))
     {
         fprintf(stderr, "failed creating a new string_int_part!");
@@ -51,24 +51,28 @@ STR_INT* new_str_int(char base, size_t part_len)
 //cleaning STR_INT data
 int deleteSTR_INT(STR_INT* corpse)
 {
-    STR_INT_PART* part_it = corpse->head;
-    for (; part_it != NULL; part_it = part_it->next)
+    STR_INT_PART* part_it = corpse->HEAD_;
+    for (; part_it != NULL; part_it = part_it->NEXT)
     {
-        free((void*)part_it->data);
-        if (part_it->prev!=NULL)
-            free((void*)part_it->prev);
+        free((void*)part_it->DATA);
+        if (part_it->PREV!=NULL)
+            free((void*)part_it->PREV);
     }
     free((void*)part_it);
     free((void*)corpse);
 }
+//$CONSTRUCTOR
 
-//ITERATOR 
+
+//^ITERATOR 
+//make forward iterator
 STR_INT_ITERATOR* make_fw_iterator(STR_INT* mom)
 {
     STR_INT_ITERATOR* it = (STR_INT_ITERATOR*) malloc(sizeof(STR_INT_ITERATOR));
     it->mom = mom;
-    it->part_it = mom->head;
-    it->data_it = mom->head->data;
+    it->part_it = mom->HEAD_;
+    it->data_it = mom->HEAD_->DATA;
+    it->direction_fw = 1;
     return it;
 }
 
@@ -76,24 +80,25 @@ STR_INT_ITERATOR* make_bw_iterator(STR_INT* mom)
 {
     STR_INT_ITERATOR* it = (STR_INT_ITERATOR*) malloc(sizeof(STR_INT_ITERATOR));
     it->mom = mom;
-    it->part_it = mom->tail;
-    it->data_it = mom->end;
+    it->part_it = mom->TAIL_;
+    it->data_it = mom->END_;
+    it->direction_fw = 0;
     return it;
 }
 
 int iterator_fw(STR_INT_ITERATOR* it)
 {
-    if (it->data_it == it->mom->end) {
+    if (it->data_it == it->mom->END_) {
         //printf("ERROR: forward iterator called on end\n");
         return 0;
     }
     it->data_it++;
-    if (it->data_it == it->mom->end)
+    if (it->data_it == it->mom->END_)
         return 0;
-    else if (it->data_it == it->part_it->data + it->mom->partSz)
+    else if (it->data_it == it->part_it->DATA + it->mom->PARTSZ_)
     {
-        it->part_it = it->part_it->next;
-        it->data_it = it->part_it->data;
+        it->part_it = it->part_it->NEXT;
+        it->data_it = it->part_it->DATA;
         return 1;
     }
     return 1; //return true 
@@ -101,27 +106,36 @@ int iterator_fw(STR_INT_ITERATOR* it)
 
 int iterator_bw(STR_INT_ITERATOR* it)
 {
-    if (it->part_it == it->mom->head && it->data_it == it->mom->head->data)
+    if (it->part_it == it->mom->HEAD_ && it->data_it == it->mom->HEAD_->DATA)
     { 
         //printf("ERROR: backward iterator called on begin\n");
         return 0;
     }
     it->data_it--;
-    if (it->data_it < it->part_it->data)
+    if (it->data_it < it->part_it->DATA)
     {
-        if (it->part_it == it->mom->head) return 0;
-        it->part_it = it->part_it->prev;
-        it->data_it = it->part_it->data + it->mom->partSz - 1;
+        if (it->part_it == it->mom->HEAD_) return 0;
+        it->part_it = it->part_it->PREV;
+        it->data_it = it->part_it->DATA + it->mom->PARTSZ_ - 1;
     }
     return 1;
+}
+
+int next(STR_INT_ITERATOR* it)
+{
+    if (it->direction_fw)
+        iterator_fw(it);
+    else
+        iterator_bw(it);
 }
 
 int it_eq(const STR_INT_ITERATOR* a, const STR_INT_ITERATOR* b)
 {
     return a->data_it == b->data_it;
 }
+//$ITERATOR
 
-
+//^FUNCTIONS
 //we want a useful char from number
 //basically the symbol representing the largest allowed digit 1-9 a(10)-z(36)
 char max_digit(size_t b)
@@ -175,119 +189,132 @@ char to_symbol(const char* cnum)
     return *cnum - 10 + 'A';
 }
 
+// THIS IS WRONG! It doesn't comply with the design of having the most significant number at the back of STR_INT!
 //READ NUBMER FROM INPUT:
-int read_num(STR_INT* num, FILE* f)
+int read_num_from_input(STR_INT* num, FILE* f)
 {
     char c;
-    num->tailLength = 0;
+    num->TAIL_LENGTH_ = 0;
     //we need to allow only numbers < base
     //IGNORE white spaces or any possibly separating symbols in front
     c = getc(f);
-    while (c == '0' || is_digit(c, max_digit(num->base)) == 0)//ignore leading zeros
+    while (c == '0' || is_digit(c, max_digit(num->BASE_)) == 0)//ignore leading zeros
     {
         if (c == '$') return 1;//$ is escape character
         c = getc(f);
     }
     printf("found a number and reading...\n");
     //READING THE NUMBER:
-    STR_INT_PART* part_it = num->head;
-    char* data_it = num->head->data; //iterator
-    while (is_digit_convert(&c,&num->base))
+
+    STR_INT_PART* part_it = num->HEAD_;
+    char* data_it = num->HEAD_->DATA; //iterator
+    while (is_digit_convert(&c,&num->BASE_))
     {
         //if we reach the end of the data array:
-        if (data_it == part_it->data+num->partSz) //last element is data+num->partSZ-1, so this is the overflow
+        if (data_it == part_it->DATA + num->PARTSZ_) //last element is data+num->partSZ-1, so this is the overflow
         {
             if (new_si_part(num)){
                 fprintf(stderr, "new part creation failed!\n");
                 return 1;
             }
-            part_it = part_it->next;//created new part is already next in the linked list
-            data_it = part_it->data;
-            num->tailLength = 0;//we start from 0, the previous parts are all full
+            part_it = part_it->NEXT;//created new part is already next in the linked list
+            data_it = part_it->DATA;
+            num->TAIL_LENGTH_ = 0;//we start from 0, the previous parts are all full
         }
         *data_it++ = c;
-        num->tailLength++;
+        num->TAIL_LENGTH_++;
         c = getc(f);
 
     }
-    if (data_it < part_it->data+num->partSz) *data_it = '\0';//marks the end, but this is not gonna be used
-    num->end = data_it;
+    if (data_it < part_it->DATA + num->PARTSZ_) *data_it = '\0';//marks the end, but this is not gonna be used
+    num->END_ = data_it;
 
     //HERE we mirror the elements of the linked arrays of char, so that every number has its lowest digit on 1
     //VARIABLES:
     int fw_count = 0;
     int bw_count = 0;
     char tmp;
-    STR_INT_PART* fw_part = num->head;
-    STR_INT_PART* bw_part = num->tail;
-    char* fw_data = fw_part->data;
-    char* bw_data = bw_part->data+num->tailLength-1;
+    STR_INT_PART* fw_part = num->HEAD_;
+    STR_INT_PART* bw_part = num->TAIL_;
+    char* fw_DATA = fw_part->DATA;
+    char* bw_DATA = bw_part->DATA+num->TAIL_LENGTH_-1;
     //MIRRORING loop:
     while (1)
     {
         //CHECKS if the mirroring should stop:
         //we only need to cross into other parts when the two pointers point to different parts
         if (fw_part != bw_part){
-            //forward data iterator overflowing
-            if (fw_data == fw_part->data + num->partSz)
+            //forward DATA iterator overflowing
+            if (fw_DATA == fw_part->DATA + num->PARTSZ_)
             {
-                fw_part = fw_part->next;
-                fw_data = fw_part->data;
+                fw_part = fw_part->NEXT;
+                fw_DATA = fw_part->DATA;
             }
-            //backward data iterator underflowing
-            if (bw_data == (bw_part->data-1))
+            //backward DATA iterator underflowing
+            if (bw_DATA == (bw_part->DATA-1))
             {
-                bw_part = bw_part->prev;
-                bw_data = bw_part->data+(num->partSz-1);
+                bw_part = bw_part->PREV;
+                bw_DATA = bw_part->DATA+(num->PARTSZ_-1);
             }
             
         }
-        if (fw_part == bw_part->next)
+        if (fw_part == bw_part->NEXT)
             break;
         //reached the middle
-        if (fw_part == bw_part && fw_data >= bw_data) 
+        if (fw_part == bw_part && fw_DATA >= bw_DATA) 
             break;
         //SWITCH:
-        //printf("switching %c <-> %c\n", *fw_data+'0', *bw_data+'0');
-        tmp = *fw_data;
-        *fw_data = *bw_data;
-        *bw_data = tmp;
+        //printf("switching %c <-> %c\n", *fw_DATA+'0', *bw_DATA+'0');
+        tmp = *fw_DATA;
+        *fw_DATA = *bw_DATA;
+        *bw_DATA = tmp;
         //point to next
-        fw_data++;
-        bw_data--;
+        fw_DATA++;
+        bw_DATA--;
     }
 
     return 0;//zero errors
 }
 
-/*append is special because it pushes num->end further, and that's why it needs to call new_si_part*/
-int str_int_append(STR_INT* num, char digit)
+int read_num(STR_INT* num, FILE* f)
+{
+    STR_INT* reversed_num;
+    if(!read_num_from_input(reversed_num,f))
+    {
+        fprintf(stderr, "failed to read the number from file!\n");
+        return 1;
+    }
+    //NOW copy the number backwards using the STR_INT_ITERATOR
+}
+
+/*appEND_ is special because it pushes num->END_ further, and that's why it needs to call new_si_part*/
+int str_int_appEND_(STR_INT* num, char digit)
 {
     //we need to enlarge num
-    if (num->end == num->tail->data+num->partSz)
+    if (num->END_ == num->TAIL_->DATA+num->PARTSZ_)
     {
         if (new_si_part(num)){
             fprintf(stderr, "new part creation failed!\n");
             return 1;
         }
-        num->end = num->tail->data;
-        num->tailLength = 1;//we start from 0, the previous parts are all full
+        num->END_ = num->TAIL_->DATA;
+        num->TAIL_LENGTH_ = 1;//we start from 0, the previous parts are all full
     }
     //num size is fine
-    else num->tailLength++;
-    //insert digit and move end further
-    *num->end++ = digit;
+    else num->TAIL_LENGTH_++;
+    //insert digit and move END_ further
+    *num->END_++ = digit;
     return 0;
 }
 
 int str_int_insert(STR_INT_ITERATOR* num_it, char digit)
 {
-    //iterator at the end, so append
-    if (num_it->data_it == num_it->mom->end) {
-        str_int_append(num_it->mom, digit);
-        //end was push, possibly into an entirely different area in memory
-        //-> end previous end might be just after the last part data chunk
-        num_it->data_it = num_it->mom->end-1;
+    //iterator at the END_, so appEND_
+    if (num_it->data_it == num_it->mom->END_) {
+        str_int_appEND_(num_it->mom, digit);
+        //END_ was push, possibly into an entirely different area in memory
+        //-> END_ previous END_ might be just after the last part DATA chunk
+        num_it->data_it = num_it->mom->END_-1;
         return 0;
     }
     //or insert
@@ -315,17 +342,17 @@ void formated_print_str_int(STR_INT* num, FILE* f, char brk, size_t line_len)//p
     free((void*)bw_it);
 }
 
-//BACKWARD PRINTING is actually just straightforward printing, because we keep the data backward
+//BACKWARD PRINTING is actually just straightforward printing, because we keep the DATA backward
 void backward_print_str_int(STR_INT* num, FILE* f, int brk, size_t line_len)
 {
     int fin = 0;
-    for (STR_INT_PART* part_it = num->HEAD_; part_it != NULL; part_it = part_it->next)
+    for (STR_INT_PART* part_it = num->HEAD_; part_it != NULL; part_it = part_it->NEXT)
     {   
         int i = 0;
         if (fin) break;
-        for (char* data_it = part_it->data; data_it < part_it->data + num->partSz; data_it++)
+        for (char* data_it = part_it->DATA; data_it < part_it->DATA + num->PARTSZ_; data_it++)
         {
-            if (part_it == num->tail && data_it == num->end)
+            if (part_it == num->TAIL_ && data_it == num->END_)
             {    
                 fin = 1;
                 break;
@@ -356,15 +383,15 @@ int mark(char* num, char base)
 
 //ARITHMETICS:
 int base_not_eq(STR_INT* a, STR_INT* b){
-    if (a->base != b->base){ 
-        printf("ERROR: only add numbers of same base! %c != %c", a->base+'0', b->base+'0');
+    if (a->BASE_ != b->BASE_){ 
+        printf("ERROR: only add numbers of same base! %c != %c", a->BASE_+'0', b->BASE_+'0');
         return 1;
     }
     return 0;
 }
 
 int str_int_same(STR_INT* a, STR_INT*b){
-    return a->head == b->head;
+    return a->HEAD_ == b->HEAD_;
 }
 
 STR_INT_ITERATOR* target_setup(STR_INT_ITERATOR* a_it, STR_INT_ITERATOR* b_it, STR_INT* target){
@@ -375,9 +402,9 @@ STR_INT_ITERATOR* target_setup(STR_INT_ITERATOR* a_it, STR_INT_ITERATOR* b_it, S
         return b_it;
     }
     //target is a new str_int innitiated to 0
-    target->base = a_it->mom->base;//we need to common base
-    target->end--;//move end from pointing to data[1] to data[0]
-    target->tailLength = 0;//decrease from 1 to 0
+    target->BASE_ = a_it->mom->BASE_;//we need to common base
+    target->END_--;//move END_ from pointing to DATA[1] to DATA[0]
+    target->TAIL_LENGTH_ = 0;//decrease from 1 to 0
     STR_INT_ITERATOR* t_it = make_fw_iterator(target);
     return t_it;
 }
@@ -398,8 +425,8 @@ int str_int_add(STR_INT* a, STR_INT* b, STR_INT* target)
     while (a_cont && b_cont)
     {
         char sum = *a_it->data_it + *b_it->data_it + overflow;
-        str_int_insert(t_it, sum % a->base);
-        overflow = sum / a->base;
+        str_int_insert(t_it, sum % a->BASE_);
+        overflow = sum / a->BASE_;
         if (!it_eq(a_it,t_it) && !it_eq(b_it,t_it)) iterator_fw(t_it);
         a_cont = iterator_fw(a_it);
         b_cont = iterator_fw(b_it);
@@ -450,7 +477,7 @@ int str_int_minus(STR_INT* a, STR_INT* b, STR_INT* target)
         }
         else //we need to add base to a
         {
-            sum = *a_it->data_it + a->base - *b_it->data_it - overflow; 
+            sum = *a_it->data_it + a->BASE_ - *b_it->data_it - overflow; 
             overflow = 1;
         }
         str_int_insert(t_it, sum);
@@ -461,7 +488,7 @@ int str_int_minus(STR_INT* a, STR_INT* b, STR_INT* target)
     while (a_cont && overflow){//the main complication is that the a digit can be 0 -> base - overflow
         if (*a_it->data_it < overflow) 
         {
-            sum = a->base - overflow;
+            sum = a->BASE_ - overflow;
         }
         else sum = *a_it->data_it - overflow;
         
@@ -472,22 +499,22 @@ int str_int_minus(STR_INT* a, STR_INT* b, STR_INT* target)
         a_cont = iterator_fw(a_it);
     }
     while (b_cont){//a digit is always 0 and overflow is always 1
-        str_int_insert(t_it, a->base - *b_it->data_it - overflow);//t_it doesn't move
+        str_int_insert(t_it, a->BASE_ - *b_it->data_it - overflow);//t_it doesn't move
         if (!it_eq(b_it, t_it))
             iterator_fw(t_it);
         overflow = 1;
         b_cont = iterator_fw(b_it);
     }
     if (overflow){
-        str_int_insert(t_it, a->base - 1);
+        str_int_insert(t_it, a->BASE_ - 1);
         iterator_fw(t_it);
     }
-    //we need to mark the end correctly by backtracking to last non-0 
-    if (t_it->data_it == t_it->mom->end)
+    //we need to mark the END_ correctly by backtracking to last non-0 
+    if (t_it->data_it == t_it->mom->END_)
         iterator_bw(t_it);
     while (*t_it->data_it == 0) iterator_bw(t_it);
     iterator_fw(t_it);
-    t_it->mom->end = t_it->data_it;
+    t_it->mom->END_ = t_it->data_it;
 
     //deallocation:
     if (!it_eq(a_it, t_it) && !it_eq(b_it, t_it))

@@ -12,7 +12,7 @@ typedef struct str_int_part
     struct str_int_part* PREV;
     struct str_int_part* NEXT;
     struct str_int* MOTHER;//pointer to str_int struct that collects the overlaying info
-    char* DATA;//number characters stuffed into the part
+    char* DATA;//array of chars used as numbers -> allocated in construction to PARTSZ
 } STR_INT_PART;
 
 //structure with all info about the str_int coupled in
@@ -29,7 +29,7 @@ typedef struct str_int
     char* END_;
 } STR_INT;
 
-// ^CONSTRUCTORS
+//^CONSTRUCTORS
 
 int new_si_part(STR_INT* mom);
 /*create new str_int_part = c array that we can read the number into
@@ -46,21 +46,26 @@ STR_INT* new_str_int(char base, size_t part_len);
 int deleteSTR_INT(STR_INT* corpse);
 /*cleaning function to free the memory*/
 
-//ITERATOR:
+//$CONSTRUCTORS
+
+//^ITERATOR:
 typedef struct
 {
     STR_INT* mom;
     STR_INT_PART* part_it;
     char* data_it;
+    int direction_fw;
 } STR_INT_ITERATOR;
 /*we need to iterate over the data every time we do anything with str_int
  * that means A LOT of repeating pointer declarations */
 
 STR_INT_ITERATOR* make_fw_iterator(STR_INT* mom);
 //iterator that starts at head->data
+#define make_forward_iterator(mom)(return make_fw_iterator(mom))
 
 STR_INT_ITERATOR* make_bw_iterator(STR_INT* mom);
 //iterator that starts at the tail->data+tailLength = 1 past the end
+#define make_backward_iterator(mom)(return make_bw_iterator(mom))
 
 int iterator_fw(STR_INT_ITERATOR* it);
 //move iterator towards the end
@@ -68,12 +73,12 @@ int iterator_fw(STR_INT_ITERATOR* it);
 int iterator_bw(STR_INT_ITERATOR* it);
 //move iterator towards the begin
 
-// $CONSTRUCTORS
-
 int it_eq(const STR_INT_ITERATOR* a, const STR_INT_ITERATOR* b);
 //do iterators point to the same thing?
 
+//$ITERATOR:
 
+//^HELPFUL FUNCTIONS:
 char max_digit(size_t b);
 //given a base b, get the char representing the maximum single digit
 
@@ -106,17 +111,32 @@ int mark(char* num, char base);
 /*marks the end of the number in the tail
  * this is only useful when we need to assess an unknown array of digits
 */
+//$HELPFUL FUNCTIONS:
 
-//ARITHEMTICS:
+//^ARITHEMTICS:
 /* FOR ALL BINARY OPERATIONS:
  * target = a operation b
  * target can be specified as a or b, or it needs to be new_str_int() first
  */
 
-int str_int_add(STR_INT* a, STR_INT* b, STR_INT* target);
-// target = a + b, success return 0, error return 1
+int equal(STR_INT* left, STR_INT* right);
 
-int str_int_minus(STR_INT* a, STR_INT* b, STR_INT* target);
+int add(STR_INT* a, STR_INT* b, STR_INT* target);
+// target = a + b, success return 0, error return 1
+#define add(a,b)(return add(a,b,a))
+
+int subtract(STR_INT* a, STR_INT* b, STR_INT* target);
 // target = a - b, success return 0, error return 1
+// minus as an alias for subtract
+#define minus(a,b,c)(return subtract(a,b,c))
+#define subtract(a,b)(return subtract(a,b,a))
+#define minus(a,b)(return subtract(a,b,a))
+
+int mult(STR_INT* a, STR_INT* b, STR_INT* target);
+#define mult(a,b)(return mult(a,b,a))
+
+int div(STR_INT* a, STR_INT* b, STR_INT* target);
+#define div(a,b)(return div(a,b,a))
+//$ARITHEMTICS:
 
 #endif
