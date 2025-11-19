@@ -127,6 +127,7 @@ int next(STR_INT_ITERATOR* it)
         iterator_fw(it);
     else
         iterator_bw(it);
+    return 1;
 }
 
 int it_eq(const STR_INT_ITERATOR* a, const STR_INT_ITERATOR* b)
@@ -179,7 +180,7 @@ int is_digit_convert(char* p_c, const char* p_base){
         *p_c = 10 + (*p_c - 'a');
     else return 0; 
     //return truth value
-        return *p_c >= 0 && *p_c < *p_base;
+    return *p_c >= 0 && *p_c < *p_base;
 }
 
 char to_symbol(const char* cnum)
@@ -272,13 +273,12 @@ int read_num_from_input(STR_INT* num, FILE* f)
         fw_DATA++;
         bw_DATA--;
     }
-
     return 0;//zero errors
 }
 
 int read_num(STR_INT* num, FILE* f)
 {
-    STR_INT* reversed_num;
+    STR_INT* reversed_num = new_str_int(num->BASE_,num->PARTSZ_);
     if(!read_num_from_input(reversed_num,f))
     {
         fprintf(stderr, "failed to read the number from file!\n");
@@ -390,8 +390,27 @@ int base_not_eq(STR_INT* a, STR_INT* b){
     return 0;
 }
 
-int str_int_same(STR_INT* a, STR_INT*b){
-    return a->HEAD_ == b->HEAD_;
+int identical(STR_INT* left, STR_INT* right){
+    return left->HEAD_ == right->HEAD_;
+}
+
+int equal(STR_INT* left, STR_INT* right)
+{
+    if (identical(left,right))
+        return 1;
+    STR_INT_ITERATOR* left_it = make_fw_iterator(left);
+    STR_INT_ITERATOR* right_it = make_fw_iterator(right);
+    while (left_it != left->END_)
+    {
+        if (left_it->data_it != right_it->data_it || right_it == right->END_)
+            return 0;
+        iterator_fw(left_it);
+        iterator_fw(right_it);
+    }
+    if (right_it != right->END_)
+        return 0;
+    
+    return 1;
 }
 
 STR_INT_ITERATOR* target_setup(STR_INT_ITERATOR* a_it, STR_INT_ITERATOR* b_it, STR_INT* target){
@@ -409,7 +428,7 @@ STR_INT_ITERATOR* target_setup(STR_INT_ITERATOR* a_it, STR_INT_ITERATOR* b_it, S
     return t_it;
 }
 
-int str_int_add(STR_INT* a, STR_INT* b, STR_INT* target)
+int add(STR_INT* a, STR_INT* b, STR_INT* target)
 {
     if (base_not_eq(a,b)){ 
         return 1;
@@ -454,7 +473,7 @@ int str_int_add(STR_INT* a, STR_INT* b, STR_INT* target)
     return 0;
 }
 
-int str_int_minus(STR_INT* a, STR_INT* b, STR_INT* target)
+int subtract(STR_INT* a, STR_INT* b, STR_INT* target)
 {
     if (base_not_eq(a,b)){ 
         return 1;

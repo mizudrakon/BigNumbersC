@@ -5,15 +5,16 @@
 //test definitions
 #endif
 
+#define SIZE 2
 void tests(int base, size_t len)
 {
-    const sz = 2;
-    printf("Tests in base %d, partition length %d\n",base,len);
-    int (*func_array[sz])(STR_INT*,STR_INT*,STR_INT*) = {
-        &str_int_add,
-        &str_int_minus
+    const int sz = 2;
+    printf("Tests in base %d, partition length %ld\n",base,len);
+    int (*func_array[SIZE])(STR_INT*,STR_INT*,STR_INT*) = {
+        &add,
+        &subtract
     };
-    char signs[sz] = {'+','-'};
+    char signs[SIZE] = {'+','-'};
     STR_INT *a = new_str_int(base,len);
     print_str_int(a,stdout);
     printf("enter number: ");
@@ -44,7 +45,7 @@ int test_arithmetic(int limit, int (f)(STR_INT*,STR_INT*,STR_INT*), char op_sign
     int bs;
     printf("Insert base:");
     scanf("\n%d",&bs);
-    char base = max_digit(bs+1);
+    //char base = max_digit(bs+1);
     printf("base is: %c\n", bs);
     print_str_int(first,stdout);
     printf("regular print: \n");

@@ -1,0 +1,1 @@
+gcc -Wall -Wextra main.c str_number.c -o run

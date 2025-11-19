@@ -118,25 +118,25 @@ int mark(char* num, char base);
  * target = a operation b
  * target can be specified as a or b, or it needs to be new_str_int() first
  */
+int identical(STR_INT* left, STR_INT* right);
 
 int equal(STR_INT* left, STR_INT* right);
 
 int add(STR_INT* a, STR_INT* b, STR_INT* target);
 // target = a + b, success return 0, error return 1
-#define add(a,b)(return add(a,b,a))
+#define add_to(a,b)(return add(a,b,a))
 
 int subtract(STR_INT* a, STR_INT* b, STR_INT* target);
 // target = a - b, success return 0, error return 1
 // minus as an alias for subtract
 #define minus(a,b,c)(return subtract(a,b,c))
-#define subtract(a,b)(return subtract(a,b,a))
-#define minus(a,b)(return subtract(a,b,a))
+#define subtract_from(a,b)(return subtract(a,b,a))
 
 int mult(STR_INT* a, STR_INT* b, STR_INT* target);
 #define mult(a,b)(return mult(a,b,a))
 
-int div(STR_INT* a, STR_INT* b, STR_INT* target);
-#define div(a,b)(return div(a,b,a))
+int divide(STR_INT* a, STR_INT* b, STR_INT* target);
+#define divide(a,b)(return div(a,b,a))
 //$ARITHEMTICS:
 
 #endif
