@@ -40,7 +40,7 @@ void tests(int base, size_t len)
     op_sign
     a, b, c
 */
-int test_arithmetic(int limit, int (f)(STR_INT*,STR_INT*,STR_INT*), char op_sign, STR_INT* first, STR_INT* second, STR_INT* target)
+void test_arithmetic(int (f)(STR_INT*,STR_INT*,STR_INT*), char op_sign, STR_INT* first, STR_INT* second, STR_INT* target)
 {
     int bs;
     printf("Insert base:");
@@ -78,7 +78,6 @@ void print_digits(int base, int range)
 
 int main(int argc, char** argv)
 {
-
 #define LIST_NUMS 
 #ifdef LIST_NUMS
     int b = 16;

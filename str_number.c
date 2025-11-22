@@ -49,7 +49,7 @@ STR_INT* new_str_int(char base, size_t part_len)
 }
 
 //cleaning STR_INT data
-int deleteSTR_INT(STR_INT* corpse)
+void deleteSTR_INT(STR_INT* corpse)
 {
     STR_INT_PART* part_it = corpse->HEAD_;
     for (; part_it != NULL; part_it = part_it->NEXT)
@@ -134,6 +134,13 @@ int it_eq(const STR_INT_ITERATOR* a, const STR_INT_ITERATOR* b)
 {
     return a->data_it == b->data_it;
 }
+
+void swap(STR_INT_ITERATOR* left, STR_INT_ITERATOR* right)
+{
+    char help = *(left->data_it);
+    *(left->data_it) = *(right->data_it);
+    *(right->data_it) = help;
+}
 //$ITERATOR
 
 //^FUNCTIONS
@@ -190,105 +197,8 @@ char to_symbol(const char* cnum)
     return *cnum - 10 + 'A';
 }
 
-// THIS IS WRONG! It doesn't comply with the design of having the most significant number at the back of STR_INT!
-//READ NUBMER FROM INPUT:
-int read_num_from_input(STR_INT* num, FILE* f)
-{
-    char c;
-    num->TAIL_LENGTH_ = 0;
-    //we need to allow only numbers < base
-    //IGNORE white spaces or any possibly separating symbols in front
-    c = getc(f);
-    while (c == '0' || is_digit(c, max_digit(num->BASE_)) == 0)//ignore leading zeros
-    {
-        if (c == '$') return 1;//$ is escape character
-        c = getc(f);
-    }
-    printf("found a number and reading...\n");
-    //READING THE NUMBER:
-
-    STR_INT_PART* part_it = num->HEAD_;
-    char* data_it = num->HEAD_->DATA; //iterator
-    while (is_digit_convert(&c,&num->BASE_))
-    {
-        //if we reach the end of the data array:
-        if (data_it == part_it->DATA + num->PARTSZ_) //last element is data+num->partSZ-1, so this is the overflow
-        {
-            if (new_si_part(num)){
-                fprintf(stderr, "new part creation failed!\n");
-                return 1;
-            }
-            part_it = part_it->NEXT;//created new part is already next in the linked list
-            data_it = part_it->DATA;
-            num->TAIL_LENGTH_ = 0;//we start from 0, the previous parts are all full
-        }
-        *data_it++ = c;
-        num->TAIL_LENGTH_++;
-        c = getc(f);
-
-    }
-    if (data_it < part_it->DATA + num->PARTSZ_) *data_it = '\0';//marks the end, but this is not gonna be used
-    num->END_ = data_it;
-
-    //HERE we mirror the elements of the linked arrays of char, so that every number has its lowest digit on 1
-    //VARIABLES:
-    int fw_count = 0;
-    int bw_count = 0;
-    char tmp;
-    STR_INT_PART* fw_part = num->HEAD_;
-    STR_INT_PART* bw_part = num->TAIL_;
-    char* fw_DATA = fw_part->DATA;
-    char* bw_DATA = bw_part->DATA+num->TAIL_LENGTH_-1;
-    //MIRRORING loop:
-    while (1)
-    {
-        //CHECKS if the mirroring should stop:
-        //we only need to cross into other parts when the two pointers point to different parts
-        if (fw_part != bw_part){
-            //forward DATA iterator overflowing
-            if (fw_DATA == fw_part->DATA + num->PARTSZ_)
-            {
-                fw_part = fw_part->NEXT;
-                fw_DATA = fw_part->DATA;
-            }
-            //backward DATA iterator underflowing
-            if (bw_DATA == (bw_part->DATA-1))
-            {
-                bw_part = bw_part->PREV;
-                bw_DATA = bw_part->DATA+(num->PARTSZ_-1);
-            }
-            
-        }
-        if (fw_part == bw_part->NEXT)
-            break;
-        //reached the middle
-        if (fw_part == bw_part && fw_DATA >= bw_DATA) 
-            break;
-        //SWITCH:
-        //printf("switching %c <-> %c\n", *fw_DATA+'0', *bw_DATA+'0');
-        tmp = *fw_DATA;
-        *fw_DATA = *bw_DATA;
-        *bw_DATA = tmp;
-        //point to next
-        fw_DATA++;
-        bw_DATA--;
-    }
-    return 0;//zero errors
-}
-
-int read_num(STR_INT* num, FILE* f)
-{
-    STR_INT* reversed_num = new_str_int(num->BASE_,num->PARTSZ_);
-    if(!read_num_from_input(reversed_num,f))
-    {
-        fprintf(stderr, "failed to read the number from file!\n");
-        return 1;
-    }
-    //NOW copy the number backwards using the STR_INT_ITERATOR
-}
-
 /*appEND_ is special because it pushes num->END_ further, and that's why it needs to call new_si_part*/
-int str_int_appEND_(STR_INT* num, char digit)
+int append(STR_INT* num, char digit)
 {
     //we need to enlarge num
     if (num->END_ == num->TAIL_->DATA+num->PARTSZ_)
@@ -307,11 +217,10 @@ int str_int_appEND_(STR_INT* num, char digit)
     return 0;
 }
 
-int str_int_insert(STR_INT_ITERATOR* num_it, char digit)
+int insert(STR_INT_ITERATOR* num_it, char digit)
 {
-    //iterator at the END_, so appEND_
     if (num_it->data_it == num_it->mom->END_) {
-        str_int_appEND_(num_it->mom, digit);
+        append(num_it->mom, digit);
         //END_ was push, possibly into an entirely different area in memory
         //-> END_ previous END_ might be just after the last part DATA chunk
         num_it->data_it = num_it->mom->END_-1;
@@ -320,6 +229,45 @@ int str_int_insert(STR_INT_ITERATOR* num_it, char digit)
     //or insert
     *num_it->data_it = digit;
     return 0;
+}
+
+// THIS IS WRONG! It doesn't comply with the design of having the most significant number at the back of STR_INT!
+//READ NUBMER FROM INPUT:
+int read_num(STR_INT* num, FILE* f)
+{
+    char c;
+    num->TAIL_LENGTH_ = 0;
+    num->END_ = num->HEAD_->DATA;
+    //we need to allow only numbers < base
+    //IGNORE white spaces or any possibly separating symbols in front
+    c = getc(f);
+    while (c == '0' || is_digit(c, max_digit(num->BASE_)) == 0)//ignore leading zeros
+    {
+        if (c == '$') return 1;//$ is escape character
+        c = getc(f);
+    }
+    printf("found a number and reading...\n");
+    //READING THE NUMBER:
+
+    //STR_INT_PART* part_it = num->HEAD_;
+    //char* data_it = num->HEAD_->DATA; //iterator
+    while (is_digit_convert(&c,&num->BASE_))
+    {
+        append(num, c);
+        num->TAIL_LENGTH_++;
+        c = getc(f);
+    }
+    //HERE we mirror the elements of the linked arrays of char, so that every number has its lowest digit on 1
+    STR_INT_ITERATOR* fw_it = make_fw_iterator(num);
+    STR_INT_ITERATOR* bw_it = make_bw_iterator(num);
+    //MIRRORING loop:
+    while (!it_eq(fw_it,bw_it))
+    {
+        swap(fw_it, bw_it);
+    }
+    free((void*)fw_it);
+    free((void*)bw_it);
+    return 0;//zero errors
 }
 
 void formated_print_str_int(STR_INT* num, FILE* f, char brk, size_t line_len)//prints a number string to chosen output
@@ -348,7 +296,6 @@ void backward_print_str_int(STR_INT* num, FILE* f, int brk, size_t line_len)
     int fin = 0;
     for (STR_INT_PART* part_it = num->HEAD_; part_it != NULL; part_it = part_it->NEXT)
     {   
-        int i = 0;
         if (fin) break;
         for (char* data_it = part_it->DATA; data_it < part_it->DATA + num->PARTSZ_; data_it++)
         {
@@ -400,24 +347,30 @@ int equal(STR_INT* left, STR_INT* right)
         return 1;
     STR_INT_ITERATOR* left_it = make_fw_iterator(left);
     STR_INT_ITERATOR* right_it = make_fw_iterator(right);
-    while (left_it != left->END_)
+    int mark = 1;
+    while (left_it->data_it != left->END_)
     {
-        if (left_it->data_it != right_it->data_it || right_it == right->END_)
-            return 0;
+        if (left_it->data_it != right_it->data_it || right_it->data_it == right->END_)
+        {
+            mark = 0;
+            break;
+        }
         iterator_fw(left_it);
         iterator_fw(right_it);
     }
-    if (right_it != right->END_)
-        return 0;
+    if (right_it->data_it != right->END_)
+        mark = 0;
     
-    return 1;
+    free((void*)left_it);
+    free((void*)right_it);
+    return mark;
 }
 
 STR_INT_ITERATOR* target_setup(STR_INT_ITERATOR* a_it, STR_INT_ITERATOR* b_it, STR_INT* target){
-    if (str_int_same(a_it->mom, target)){
+    if (identical(a_it->mom, target)){
         return a_it;
     }
-    else if (str_int_same(b_it->mom, target)){
+    else if (identical(b_it->mom, target)){
         return b_it;
     }
     //target is a new str_int innitiated to 0
@@ -433,7 +386,6 @@ int add(STR_INT* a, STR_INT* b, STR_INT* target)
     if (base_not_eq(a,b)){ 
         return 1;
     }
-    int isTargetNew = 0; 
     STR_INT_ITERATOR* a_it = make_fw_iterator(a);
     STR_INT_ITERATOR* b_it = make_fw_iterator(b);
     STR_INT_ITERATOR* t_it = target_setup(a_it, b_it, target);
@@ -444,26 +396,26 @@ int add(STR_INT* a, STR_INT* b, STR_INT* target)
     while (a_cont && b_cont)
     {
         char sum = *a_it->data_it + *b_it->data_it + overflow;
-        str_int_insert(t_it, sum % a->BASE_);
+        insert(t_it, sum % a->BASE_);
         overflow = sum / a->BASE_;
         if (!it_eq(a_it,t_it) && !it_eq(b_it,t_it)) iterator_fw(t_it);
         a_cont = iterator_fw(a_it);
         b_cont = iterator_fw(b_it);
     }
     while (a_cont){
-        str_int_insert(t_it, *a_it->data_it + overflow);
+        insert(t_it, *a_it->data_it + overflow);
         overflow = 0;
         if (!it_eq(a_it, t_it)) iterator_fw(t_it);
         a_cont = iterator_fw(a_it);
     }
     while (b_cont){
-        str_int_insert(t_it, *b_it->data_it + overflow);
+        insert(t_it, *b_it->data_it + overflow);
         overflow = 0;
         if (!it_eq(b_it, t_it)) iterator_fw(t_it);
         b_cont = iterator_fw(b_it);
     }
     if (overflow){
-        str_int_insert(t_it, 1);
+        insert(t_it, 1);
     }
     //deallocation
     if (!it_eq(a_it, t_it) && !it_eq(b_it, t_it))
@@ -478,7 +430,6 @@ int subtract(STR_INT* a, STR_INT* b, STR_INT* target)
     if (base_not_eq(a,b)){ 
         return 1;
     }
-    int isTargetNew = 0; 
     STR_INT_ITERATOR* a_it = make_fw_iterator(a);
     STR_INT_ITERATOR* b_it = make_fw_iterator(b);
     STR_INT_ITERATOR* t_it = target_setup(a_it, b_it, target);
@@ -499,7 +450,7 @@ int subtract(STR_INT* a, STR_INT* b, STR_INT* target)
             sum = *a_it->data_it + a->BASE_ - *b_it->data_it - overflow; 
             overflow = 1;
         }
-        str_int_insert(t_it, sum);
+        insert(t_it, sum);
         if (!it_eq(a_it,t_it) && !it_eq(b_it,t_it)) iterator_fw(t_it);
         a_cont = iterator_fw(a_it);
         b_cont = iterator_fw(b_it);
@@ -511,21 +462,21 @@ int subtract(STR_INT* a, STR_INT* b, STR_INT* target)
         }
         else sum = *a_it->data_it - overflow;
         
-        str_int_insert(t_it, sum);
+        insert(t_it, sum);
         overflow = 0;
         if (!it_eq(a_it, t_it))
             iterator_fw(t_it);
         a_cont = iterator_fw(a_it);
     }
     while (b_cont){//a digit is always 0 and overflow is always 1
-        str_int_insert(t_it, a->BASE_ - *b_it->data_it - overflow);//t_it doesn't move
+        insert(t_it, a->BASE_ - *b_it->data_it - overflow);//t_it doesn't move
         if (!it_eq(b_it, t_it))
             iterator_fw(t_it);
         overflow = 1;
         b_cont = iterator_fw(b_it);
     }
     if (overflow){
-        str_int_insert(t_it, a->BASE_ - 1);
+        insert(t_it, a->BASE_ - 1);
         iterator_fw(t_it);
     }
     //we need to mark the END_ correctly by backtracking to last non-0 
@@ -543,4 +494,4 @@ int subtract(STR_INT* a, STR_INT* b, STR_INT* target)
     return 0;
 }
 
-STR_INT* convert(){}
+void convert(STR_INT* num, char new_base){}

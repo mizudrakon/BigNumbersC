@@ -43,7 +43,7 @@ STR_INT* new_str_int(char base, size_t part_len);
 //STR_INT* new_str_int(size_t base_num, size_t part_len);
 /*creating a new handle for a number*/
 
-int deleteSTR_INT(STR_INT* corpse);
+void deleteSTR_INT(STR_INT* corpse);
 /*cleaning function to free the memory*/
 
 //$CONSTRUCTORS
@@ -91,14 +91,14 @@ int is_digit_convert(char* p_c, const char* p_base);
 char to_symbol(const char* cnum);
 //converts small saved in char to it's char symbol
 
+int append(STR_INT* num, char digit);
+/*appends a digit to the end of the number*/
+
 int read_num(STR_INT* num, FILE* f);
 /*read from the specified input into the specified number handler
  * writes the digits one by one into the head part
  * calls new_str_int_part() if necessary
  * returns 1 for success and 0 for failure, which might switch, since the opposite might be handier for counting total errors*/
-
-int str_int_append(STR_INT* num, char digit);
-/*appends a digit to the end of the number*/
 
 void formated_print_str_int(STR_INT* num, FILE* f,char brk, size_t line_len);
 //print with possibility of adding new_lines, brk is meant as bool, line len is the required lenght

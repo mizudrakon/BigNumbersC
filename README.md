@@ -33,5 +33,5 @@
 
 - defined identical(a,b)
 - defined equal(a,b)
+- changed read_num to use iteraor struct
 - NOT TESTED
-- working on read_num
