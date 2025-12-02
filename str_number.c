@@ -60,6 +60,7 @@ void deleteSTR_INT(STR_INT* corpse)
     }
     free((void*)part_it);
     free((void*)corpse);
+    printf("deleted STR_INT\n");
 }
 //$CONSTRUCTOR
 
@@ -168,6 +169,7 @@ int is_digit(char c, const char maxDigit){
         c = 'a' + (c - 'A');
     }
     //the case we need to deal with the 10+ base
+    //printf("%c = %d\n",c,c);
     if (maxDigit >= 'a' && maxDigit <= 'z'){
         return (c >= '0' && c <= '9') || (c >= 'a' && c <= maxDigit);
     }
@@ -231,45 +233,6 @@ int insert(STR_INT_ITERATOR* num_it, char digit)
     return 0;
 }
 
-// THIS IS WRONG! It doesn't comply with the design of having the most significant number at the back of STR_INT!
-//READ NUBMER FROM INPUT:
-int read_num(STR_INT* num, FILE* f)
-{
-    char c;
-    num->TAIL_LENGTH_ = 0;
-    num->END_ = num->HEAD_->DATA;
-    //we need to allow only numbers < base
-    //IGNORE white spaces or any possibly separating symbols in front
-    c = getc(f);
-    while (c == '0' || is_digit(c, max_digit(num->BASE_)) == 0)//ignore leading zeros
-    {
-        if (c == '$') return 1;//$ is escape character
-        c = getc(f);
-    }
-    printf("found a number and reading...\n");
-    //READING THE NUMBER:
-
-    //STR_INT_PART* part_it = num->HEAD_;
-    //char* data_it = num->HEAD_->DATA; //iterator
-    while (is_digit_convert(&c,&num->BASE_))
-    {
-        append(num, c);
-        num->TAIL_LENGTH_++;
-        c = getc(f);
-    }
-    //HERE we mirror the elements of the linked arrays of char, so that every number has its lowest digit on 1
-    STR_INT_ITERATOR* fw_it = make_fw_iterator(num);
-    STR_INT_ITERATOR* bw_it = make_bw_iterator(num);
-    //MIRRORING loop:
-    while (!it_eq(fw_it,bw_it))
-    {
-        swap(fw_it, bw_it);
-    }
-    free((void*)fw_it);
-    free((void*)bw_it);
-    return 0;//zero errors
-}
-
 void formated_print_str_int(STR_INT* num, FILE* f, char brk, size_t line_len)//prints a number string to chosen output
 {
     size_t charCount = 0;
@@ -319,6 +282,53 @@ void print_str_int(STR_INT* num, FILE* f)
     formated_print_str_int(num, f, 0, 0);
 }
 
+
+//READ NUBMER FROM INPUT:
+int read_num(STR_INT* num, FILE* f)
+{
+    printf("reading STR_INT\n");
+    char c;
+    num->TAIL_LENGTH_ = 0;
+    num->END_ = num->HEAD_->DATA;
+    //we need to allow only numbers < base
+    //IGNORE white spaces or any possibly separating symbols in front
+    c = getc(f);
+    printf("looking for a number!\n");
+    while (c == '0' || !is_digit(c, max_digit(num->BASE_)))//ignore leading zeros
+    {
+        if (c == '$') 
+        {
+            printf("escape character before number input");
+            return 1;//$ is escape character
+        }
+            c = getc(f);
+    }
+    printf("found a number and reading...\n");
+    //READING THE NUMBER:
+    //STR_INT_PART* part_it = num->HEAD_;
+    //char* data_it = num->HEAD_->DATA; //iterator
+    while (is_digit_convert(&c,&num->BASE_))
+    {
+        append(num, c);
+        num->TAIL_LENGTH_++;
+        c = getc(f);
+    }
+    putc('\n',stdout);
+    print_str_int(num, stdout);
+    putc('\n',stdout);
+    //HERE we mirror the elements of the linked arrays of char, so that every number has its lowest digit on 1
+    STR_INT_ITERATOR* fw_it = make_fw_iterator(num);
+    STR_INT_ITERATOR* bw_it = make_bw_iterator(num);
+    //MIRRORING loop:
+    printf("Now mirroring!\n");
+    while (!it_eq(fw_it,bw_it))
+    {
+        swap(fw_it, bw_it);
+    }
+    free((void*)fw_it);
+    free((void*)bw_it);
+    return 0;//zero errors
+}
 
 int mark(char* num, char base)
 {

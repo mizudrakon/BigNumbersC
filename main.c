@@ -78,20 +78,32 @@ void print_digits(int base, int range)
 
 int main(int argc, char** argv)
 {
-#define LIST_NUMS 
+//#define LIST_NUMS 
 #ifdef LIST_NUMS
-    int b = 16;
     //char base = max_digit(b+1);
     /*the thing is: we usually need the max_digit which is 15, not the actual base which would be 16
      not sure if I should change the code to enter the actual base...*/
     for (int i = 1; i <= 40; i++)
         printf("max digit for base %d: %c\n", i, max_digit(i));
-    printf("list of all numeric characters for base %c:\n",b);
+    int b = 10;
+    printf("list of all numeric characters for base %d:\n",b);
     for (int i = 1; i <= 140; i++){
-        if (is_digit(i,max_digit(b+1)))
-            printf("%c is digit for base %c = %d\n",i,max_digit(b+1),b);
+        if (is_digit(i,max_digit(b)))
+            printf("%c is a digit for base %d\n",i,b);
     }
     putchar('\n');
+#endif
+#define RANTEST
+#ifdef RANTEST
+
+#endif
+#define READ_TEST
+#ifdef READ_TEST
+    STR_INT* sn = new_str_int(max_digit(10),10);
+    printf("Made new STR_INT\n");
+    read_num(sn,stdin);
+    print_str_int(sn,stdout);
+    deleteSTR_INT(sn);
 #endif
 #ifdef TEST
     STR_INT* a, *b, *c;

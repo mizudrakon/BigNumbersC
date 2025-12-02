@@ -94,18 +94,18 @@ char to_symbol(const char* cnum);
 int append(STR_INT* num, char digit);
 /*appends a digit to the end of the number*/
 
-int read_num(STR_INT* num, FILE* f);
-/*read from the specified input into the specified number handler
- * writes the digits one by one into the head part
- * calls new_str_int_part() if necessary
- * returns 1 for success and 0 for failure, which might switch, since the opposite might be handier for counting total errors*/
-
 void formated_print_str_int(STR_INT* num, FILE* f,char brk, size_t line_len);
 //print with possibility of adding new_lines, brk is meant as bool, line len is the required lenght
 //but it might be nice to make brk a separator specifier and get the truth value just for line_len x<=0 being false
 
 void print_str_int(STR_INT* num, FILE* f);
 //just print with no \n-s
+
+int read_num(STR_INT* num, FILE* f);
+/*read from the specified input into the specified number handler
+ * writes the digits one by one into the head part
+ * calls new_str_int_part() if necessary
+ * returns 1 for success and 0 for failure, which might switch, since the opposite might be handier for counting total errors*/
 
 int mark(char* num, char base);
 /*marks the end of the number in the tail
