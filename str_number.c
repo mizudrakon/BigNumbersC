@@ -1,4 +1,7 @@
 #include "str_number.h"
+
+const char MAX_POSSIBLE_BASE_ = 'z' - 'a' + 11;
+
 //^CONSTRUCTOR
 //this adds a new part to a specified mother, does it need to return a pointer?
 int new_si_part(STR_INT* mom)
@@ -28,6 +31,11 @@ int new_si_part(STR_INT* mom)
 
 STR_INT* new_str_int(char base, size_t part_len)
 {
+    if (base > MAX_POSSIBLE_BASE_)
+    {
+        printf("base %d not supported!", base);
+        return NULL;
+    }
     STR_INT* strnum;
     if ((strnum = (STR_INT*) malloc(sizeof(STR_INT))) == NULL)//allocate struct
         printf("new_str_int malloc failed\n");
@@ -159,44 +167,35 @@ char max_digit(size_t b)
     return '$';
 }
 
-/*numbers 10+ are represented by letters, so we need to test characters and not just regular numerals
-c is char to be tested against the base (c < base, since base isn't a numeral in it's own system)
-* this is a basic is_digit function only to tell us if the number is */
-int is_digit(char c, const char maxDigit){
-    //reduce capital letters to small, since we're not sure which come first
-    if (c >= 'A' && c <= 'Z')
-    {
-        c = 'a' + (c - 'A');
-    }
-    //the case we need to deal with the 10+ base
-    //printf("%c = %d\n",c,c);
-    if (maxDigit >= 'a' && maxDigit <= 'z'){
-        return (c >= '0' && c <= '9') || (c >= 'a' && c <= maxDigit);
-    }
-    return c >= '0' && c <= maxDigit;
-}
-
-/*A horrible function that returns a truth value BUT also changes the char value that is being evaluated
- * the thing is our str_int uses char ordinal values of chars, not the symbols, so this is how we want to keep them
- * the value used by reference is actually a copy from the source already and we don't care what happens to it here*/
-int is_digit_convert(char* p_c, const char* p_base){
-    //reduce capital letters to small, since we're not sure which come first
-    if (*p_c >= '0' && *p_c <= '9')
-        *p_c = *p_c - '0';
-    else if (*p_c >= 'A' && *p_c <= 'Z')
-        *p_c = 10 + (*p_c - 'A');
-    else if (*p_c >= 'a' && *p_c <= 'z')
-        *p_c = 10 + (*p_c - 'a');
-    else return 0; 
-    //return truth value
-    return *p_c >= 0 && *p_c < *p_base;
-}
-
-char to_symbol(const char* cnum)
+// conversion from char as character to char as number
+char to_cnum(char c)
 {
-    if (*cnum < 10)
-        return *cnum + '0';
-    return *cnum - 10 + 'A';
+    if (c >= '0' && c <= '9')
+        return c - '0';
+    else if ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z'))
+    {
+        c = (c >= 'A' && c <= 'Z') ? c - 'A' : c - 'a';
+        return c + 10;
+    }
+    return '$';
+}
+
+int is_cnum_digit(char cnum, const STR_INT* num)
+{
+    return (cnum == '$') ? 0 : cnum <= (num->BASE_ - 1);
+}
+
+// does the character c represent a digit given the base of our number?
+int is_char_digit(char c, const STR_INT* num)
+{
+    return is_cnum_digit(to_cnum(c), num);
+}
+
+char to_symbol(const char cnum)
+{
+    if (cnum < 10)
+        return cnum + '0';
+    return cnum - 10 + 'A';
 }
 
 /*appEND_ is special because it pushes num->END_ further, and that's why it needs to call new_si_part*/
@@ -239,24 +238,22 @@ void formated_print_str_int(STR_INT* num, FILE* f, char brk, size_t line_len)//p
     STR_INT_ITERATOR* bw_it = make_bw_iterator(num);
     while (iterator_bw(bw_it))
     {
-        if (*bw_it->data_it < 10)
-            putc(*bw_it->data_it + '0',f);
-        else
-            putc(*bw_it->data_it - 10 + 'A',f);
+        putc(to_symbol(*(bw_it->data_it)),f);
         charCount++;
-        if (charCount == line_len){
+        if (brk != 0 && charCount == line_len){
             putc(brk,f);
             charCount = 0;
         }
     }
-    putc('\n',f);
+    putc(brk,f);
     free((void*)bw_it);
 }
 
 //BACKWARD PRINTING is actually just straightforward printing, because we keep the DATA backward
-void backward_print_str_int(STR_INT* num, FILE* f, int brk, size_t line_len)
+void backward_print_str_int(STR_INT* num, FILE* f, char brk, size_t line_len)
 {
     int fin = 0;
+    size_t charCount = 0;
     for (STR_INT_PART* part_it = num->HEAD_; part_it != NULL; part_it = part_it->NEXT)
     {   
         if (fin) break;
@@ -267,14 +264,15 @@ void backward_print_str_int(STR_INT* num, FILE* f, int brk, size_t line_len)
                 fin = 1;
                 break;
             }
-
-            if (*data_it < 10)
-                putc(*data_it + '0',f);
-            else
-                putc(*data_it - 10 + 'A',f);
+            putc(to_symbol(*data_it),f);
+            charCount++;
+            if (brk != 0 && charCount == line_len){
+                putc(brk,f);
+                charCount = 0;
+            }
         }
     }
-    putc('\n',f);
+    putc(brk,f);
 }
 
 void print_str_int(STR_INT* num, FILE* f)
@@ -293,25 +291,29 @@ int read_num(STR_INT* num, FILE* f)
     //we need to allow only numbers < base
     //IGNORE white spaces or any possibly separating symbols in front
     c = getc(f);
+    c = to_cnum(c);
     printf("looking for a number!\n");
-    while (c == '0' || !is_digit(c, max_digit(num->BASE_)))//ignore leading zeros
+    while (c == 0 || !is_cnum_digit(c, num))//ignore leading zeros
     {
+        printf("is %c a digit? %d\n", to_symbol(c), num->BASE_);
+        c = getc(f);
         if (c == '$') 
         {
             printf("escape character before number input");
             return 1;//$ is escape character
         }
-            c = getc(f);
+        c = to_cnum(c);
     }
     printf("found a number and reading...\n");
     //READING THE NUMBER:
     //STR_INT_PART* part_it = num->HEAD_;
     //char* data_it = num->HEAD_->DATA; //iterator
-    while (is_digit_convert(&c,&num->BASE_))
+    while (is_cnum_digit(c,num))
     {
         append(num, c);
         num->TAIL_LENGTH_++;
         c = getc(f);
+        c = to_cnum(c);
     }
     putc('\n',stdout);
     print_str_int(num, stdout);
@@ -330,13 +332,15 @@ int read_num(STR_INT* num, FILE* f)
     return 0;//zero errors
 }
 
+/*
 int mark(char* num, char base)
 {
     char* num_it = num;
-    while (is_digit(*num_it,base)) num_it++;
+    while (is_cnum_digit(*num_it,base)) num_it++;
     *num_it = '\0';
     return 0;
 }
+*/
 
 //ARITHMETICS:
 int base_not_eq(STR_INT* a, STR_INT* b){
@@ -504,4 +508,7 @@ int subtract(STR_INT* a, STR_INT* b, STR_INT* target)
     return 0;
 }
 
-void convert(STR_INT* num, char new_base){}
+void convert(STR_INT* num, char new_base)
+{
+    
+}

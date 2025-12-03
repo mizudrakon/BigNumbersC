@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+
 //basically a supplement for the long-number-kept-as-string class
 /*STR_INT_PART is wrapper for a c array with pointers to previous and next
  it also has a pointer to it's mother which is the str_int struct defined next*/
@@ -82,13 +83,15 @@ int it_eq(const STR_INT_ITERATOR* a, const STR_INT_ITERATOR* b);
 char max_digit(size_t b);
 //given a base b, get the char representing the maximum single digit
 
-int is_digit(char c, const char base);
-//tests a char for being a numeric given the base
+char to_cnum(char c);
 
-int is_digit_convert(char* p_c, const char* p_base);
+int is_cnum_digit(char cnum, const STR_INT* num);
 //also converts the *p_c into form used in str_int (char with required ordinal value)
 
-char to_symbol(const char* cnum);
+int is_char_digit(char c, const STR_INT* num);
+//tests a char for being a numeric given the base
+
+char to_symbol(const char cnum);
 //converts small saved in char to it's char symbol
 
 int append(STR_INT* num, char digit);
@@ -107,7 +110,7 @@ int read_num(STR_INT* num, FILE* f);
  * calls new_str_int_part() if necessary
  * returns 1 for success and 0 for failure, which might switch, since the opposite might be handier for counting total errors*/
 
-int mark(char* num, char base);
+//int mark(char* num, char base);
 /*marks the end of the number in the tail
  * this is only useful when we need to assess an unknown array of digits
 */

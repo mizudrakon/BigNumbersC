@@ -78,6 +78,19 @@ void print_digits(int base, int range)
 
 int main(int argc, char** argv)
 {
+    size_t pt_size = 10;
+    size_t base = 10;
+    char* p; 
+    printf("there are %d arguments\n", argc);
+    if (argc > 1)
+    {
+        pt_size = strtoul(argv[1],&p,10);
+        if (argc > 2)
+        {
+            base = strtoul(argv[2],&p,10);
+        }
+        if (*p != '\0') return 0;
+    }
 //#define LIST_NUMS 
 #ifdef LIST_NUMS
     //char base = max_digit(b+1);
@@ -99,7 +112,7 @@ int main(int argc, char** argv)
 #endif
 #define READ_TEST
 #ifdef READ_TEST
-    STR_INT* sn = new_str_int(max_digit(10),10);
+    STR_INT* sn = new_str_int(base,pt_size);
     printf("Made new STR_INT\n");
     read_num(sn,stdin);
     print_str_int(sn,stdout);
