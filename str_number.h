@@ -16,6 +16,8 @@ typedef struct str_int_part
     char* DATA;//array of chars used as numbers -> allocated in construction to PARTSZ
 } STR_INT_PART;
 
+typedef struct str_int_iterator STR_INT_ITERATOR;
+
 //structure with all info about the str_int coupled in
 typedef struct str_int
 {
@@ -27,7 +29,9 @@ typedef struct str_int
     //pointers to first and last part:
     STR_INT_PART* HEAD_;
     STR_INT_PART* TAIL_;
-    char* END_;
+    STR_INT_ITERATOR* Begin;
+    STR_INT_ITERATOR* End;
+    char* LAST_;
 } STR_INT;
 
 //^CONSTRUCTORS
@@ -50,7 +54,7 @@ void deleteSTR_INT(STR_INT* corpse);
 //$CONSTRUCTORS
 
 //^ITERATOR:
-typedef struct
+typedef struct str_int_iterator
 {
     STR_INT* mom;
     STR_INT_PART* part_it;

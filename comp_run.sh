@@ -1,1 +1,1 @@
-gcc -Wall -Wextra main.c str_number.c -o run
+gcc -Wall -Wextra main.c str_number.c str_number_iterator.c str_number_io.c str_number_arithmetics.c -o run
