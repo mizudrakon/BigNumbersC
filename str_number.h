@@ -83,6 +83,8 @@ int next(STR_INT_ITERATOR* it);
 
 int it_eq(const STR_INT_ITERATOR* a, const STR_INT_ITERATOR* b);
 //do iterators point to the same thing?
+int it_l(const STR_INT_ITERATOR* left, const STR_INT_ITERATOR* right);
+int it_leq(const STR_INT_ITERATOR* left, const STR_INT_ITERATOR* right);
 
 //$ITERATOR:
 

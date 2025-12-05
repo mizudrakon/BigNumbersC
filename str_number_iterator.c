@@ -78,6 +78,21 @@ int it_eq(const STR_INT_ITERATOR* a, const STR_INT_ITERATOR* b)
     return a->data_it == b->data_it;
 }
 
+int it_l(const STR_INT_ITERATOR* left, const STR_INT_ITERATOR* right)
+{
+    if (left->part_it->PART_NUMBER > right->part_it->PART_NUMBER)
+        return 0;
+    if (left->part_it == right->part_it)
+    {
+        return left->data_it < right->data_it;
+    }
+    return 0;
+}
+
+int it_leq(const STR_INT_ITERATOR* left, const STR_INT_ITERATOR* right)
+{
+    return it_eq(left, right) || it_l(left, right);
+}
 
 void swap(STR_INT_ITERATOR* left, STR_INT_ITERATOR* right)
 {

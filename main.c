@@ -6,6 +6,61 @@
 #endif
 
 #define SIZE 2
+
+void iterator_test(STR_INT* num)
+{
+    STR_INT_ITERATOR* fw_it = make_fw_iterator(num);
+    STR_INT_ITERATOR* bw_it = make_bw_iterator(num);
+    //STR_INT_ITERATOR* bw_it = make_bw_iterator(num);
+    //MIRRORING loop:
+#ifdef ITERATORS_BASIC
+    printf("End is: %c\n",to_symbol(*(num->End->data_it-1)));
+    printf("testing iterators:\n");
+    printf("%c\n",to_symbol(*(fw_it->data_it)));
+    printf("1. forward iterator and End:\n");
+    if (it_eq(fw_it,num->Begin))
+        printf("fw_it is recognized as equal to Begin\n");
+    else
+        printf("fw_it is NOT recognized as equal to Begin\n");
+    printf("number part is %ld digits long\n", num->PARTSZ_);
+    printf("number has %ld parts\n", num->TOTAL_PARTS_);
+    printf("tail-length is %ld\n", num->TAIL_LENGTH_);
+    printf("number has %ld digits\n", length(num));
+    while (!it_eq(fw_it,num->End))
+    {
+        printf("%c\n",to_symbol(*(fw_it->data_it)));
+        next(fw_it);
+    }
+    printf("loop done\n");
+    if (it_eq(fw_it,num->End))
+        printf("fw_it is recognized as equal to End\n");
+    else
+        printf("fw_it is NOT recognized as equal to End\n");
+    
+    printf("2. backward iterator");
+    while (!it_eq(bw_it,num->Begin))
+    {
+        printf("%c\n",to_symbol(*(bw_it->data_it)));
+        next(bw_it);
+    }
+    printf("%c\n",to_symbol(*(bw_it->data_it)));
+    next(bw_it);
+    printf("%c\n",to_symbol(*(bw_it->data_it)));
+#else
+    int i = 0;
+    int stop = length(num);
+    while (it_leq(fw_it,bw_it) && i < stop)
+    {
+        printf("fw: %c bw: %c\n",to_symbol(*(fw_it->data_it)),to_symbol(*(bw_it->data_it)));
+        next(fw_it);
+        next(bw_it);
+        i++;
+    }
+#endif
+    free((void*)fw_it);
+    free((void*)bw_it);
+}
+
 void tests(int base, size_t len)
 {
     const int sz = 2;
@@ -120,6 +175,9 @@ int main(int argc, char** argv)
     printf("the resulting number is:\n");
     print_str_int(sn,stdout);
     putc('\n',stdout);
+
+    iterator_test(sn);
+
     deleteSTR_INT(sn);
 #endif
 #ifdef TEST

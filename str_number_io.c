@@ -129,62 +129,18 @@ int read_num(STR_INT* num, FILE* f)
     //HERE we mirror the elements of the linked arrays of char, so that every number has its lowest digit on 1
 #define MIRROR
 #ifdef MIRROR
-    STR_INT_ITERATOR* fw_it = make_fw_iterator(num);
-    //STR_INT_ITERATOR* bw_it = make_bw_iterator(num);
-    //MIRRORING loop:
-    printf("End is: %c\n",to_symbol(*(num->End->data_it-1)));
-    printf("testing iterators:\n");
-    printf("%c\n",to_symbol(*(fw_it->data_it)));
-    printf("1. forward iterator and End:\n");
-    if (it_eq(fw_it,num->Begin))
-        printf("fw_it is recognized as equal to Begin\n");
-    else
-        printf("fw_it is NOT recognized as equal to Begin\n");
-    printf("number part is %ld digits long\n", num->PARTSZ_);
-    printf("number has %ld parts\n", num->TOTAL_PARTS_);
-    printf("tail-length is %ld\n", num->TAIL_LENGTH_);
-    printf("number has %ld digits\n", length(num));
-    while (!it_eq(fw_it,num->End))
-    {
-        printf("%c\n",to_symbol(*(fw_it->data_it)));
-        next(fw_it);
-    }
-    printf("loop done\n");
-    if (it_eq(fw_it,num->End))
-        printf("fw_it is recognized as equal to End\n");
-    else
-        printf("fw_it is NOT recognized as equal to End\n");
-    
-    printf("2. backward iterator");
-    STR_INT_ITERATOR* bw_it = make_bw_iterator(num);
-    while (!it_eq(bw_it,num->Begin))
-    {
-        printf("%c\n",to_symbol(*(bw_it->data_it)));
-        next(bw_it);
-    }
-    printf("%c\n",to_symbol(*(bw_it->data_it)));
-    next(bw_it);
-    printf("%c\n",to_symbol(*(bw_it->data_it)));
-    /*
-    while (!it_eq(fw_it,num->End))
-    {
-        printf("%c ",to_symbol(*(fw_it->data_it)));
-        next(fw_it);
-    }
-    putc('\n',stdout);
-    */
-    /*
     printf("Now mirroring!\n");
-    while (!it_eq(fw_it,bw_it))
+    STR_INT_ITERATOR* fw_it = make_fw_iterator(num);
+    STR_INT_ITERATOR* bw_it = make_bw_iterator(num);
+    while (it_leq(fw_it,bw_it))
     {
         swap(fw_it, bw_it);
         next(fw_it);
         next(bw_it);
     }
-    */
     free((void*)fw_it);
+    free((void*)bw_it);
 #endif
-    //free((void*)bw_it);
     return 0;//zero errors
 }
 
