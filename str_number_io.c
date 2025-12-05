@@ -10,6 +10,7 @@ int append(STR_INT* num, char digit)
             fprintf(stderr, "new part creation failed!\n");
             return 1;
         }
+        num->End->part_it = num->TAIL_;
         num->End->data_it = num->TAIL_->DATA;
         num->LAST_ = num->End->data_it;
         num->TAIL_LENGTH_ = 1;//we start from 0, the previous parts are all full
@@ -32,7 +33,7 @@ int insert(STR_INT_ITERATOR* num_it, char digit)
         append(num_it->mom, digit);
         //END_ was push, possibly into an entirely different area in memory
         //-> END_ previous END_ might be just after the last part DATA chunk
-        num_it->data_it = num_it->mom->LAST_-1;
+        num_it->data_it = num_it->mom->LAST_;
         return 0;
     }
     //or insert
@@ -95,7 +96,7 @@ int read_num(STR_INT* num, FILE* f)
     printf("reading STR_INT\n");
     char c;
     num->TAIL_LENGTH_ = 0;
-    num->LAST_ = num->HEAD_->DATA;
+    num->LAST_ = num->HEAD_->DATA - 1;
     //we need to allow only numbers < base
     //IGNORE white spaces or any possibly separating symbols in front
     c = getc(f);
@@ -119,7 +120,6 @@ int read_num(STR_INT* num, FILE* f)
     while (is_cnum_digit(c,num))
     {
         append(num, c);
-        num->TAIL_LENGTH_++;
         c = getc(f);
         c = to_cnum(c);
     }
@@ -127,19 +127,52 @@ int read_num(STR_INT* num, FILE* f)
     print_str_int(num, stdout);
     putc('\n',stdout);
     //HERE we mirror the elements of the linked arrays of char, so that every number has its lowest digit on 1
+#define MIRROR
 #ifdef MIRROR
     STR_INT_ITERATOR* fw_it = make_fw_iterator(num);
     //STR_INT_ITERATOR* bw_it = make_bw_iterator(num);
     //MIRRORING loop:
+    printf("End is: %c\n",to_symbol(*(num->End->data_it-1)));
     printf("testing iterators:\n");
-    printf("%c\n",to_symbol(*(num->Begin->data_it)));
-    printf("1. forward iterator amd End:\n");
+    printf("%c\n",to_symbol(*(fw_it->data_it)));
+    printf("1. forward iterator and End:\n");
+    if (it_eq(fw_it,num->Begin))
+        printf("fw_it is recognized as equal to Begin\n");
+    else
+        printf("fw_it is NOT recognized as equal to Begin\n");
+    printf("number part is %ld digits long\n", num->PARTSZ_);
+    printf("number has %ld parts\n", num->TOTAL_PARTS_);
+    printf("tail-length is %ld\n", num->TAIL_LENGTH_);
+    printf("number has %ld digits\n", length(num));
+    while (!it_eq(fw_it,num->End))
+    {
+        printf("%c\n",to_symbol(*(fw_it->data_it)));
+        next(fw_it);
+    }
+    printf("loop done\n");
+    if (it_eq(fw_it,num->End))
+        printf("fw_it is recognized as equal to End\n");
+    else
+        printf("fw_it is NOT recognized as equal to End\n");
+    
+    printf("2. backward iterator");
+    STR_INT_ITERATOR* bw_it = make_bw_iterator(num);
+    while (!it_eq(bw_it,num->Begin))
+    {
+        printf("%c\n",to_symbol(*(bw_it->data_it)));
+        next(bw_it);
+    }
+    printf("%c\n",to_symbol(*(bw_it->data_it)));
+    next(bw_it);
+    printf("%c\n",to_symbol(*(bw_it->data_it)));
+    /*
     while (!it_eq(fw_it,num->End))
     {
         printf("%c ",to_symbol(*(fw_it->data_it)));
         next(fw_it);
     }
     putc('\n',stdout);
+    */
     /*
     printf("Now mirroring!\n");
     while (!it_eq(fw_it,bw_it))

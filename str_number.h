@@ -78,6 +78,9 @@ int iterator_fw(STR_INT_ITERATOR* it);
 int iterator_bw(STR_INT_ITERATOR* it);
 //move iterator towards the begin
 
+int next(STR_INT_ITERATOR* it);
+//universal call to move iterators
+
 int it_eq(const STR_INT_ITERATOR* a, const STR_INT_ITERATOR* b);
 //do iterators point to the same thing?
 
@@ -101,6 +104,8 @@ char to_symbol(const char cnum);
 int append(STR_INT* num, char digit);
 /*appends a digit to the end of the number*/
 
+int insert(STR_INT_ITERATOR* num_it, char digit);
+
 void formated_print_str_int(STR_INT* num, FILE* f,char brk, size_t line_len);
 //print with possibility of adding new_lines, brk is meant as bool, line len is the required lenght
 //but it might be nice to make brk a separator specifier and get the truth value just for line_len x<=0 being false
@@ -119,6 +124,8 @@ int read_num(STR_INT* num, FILE* f);
  * this is only useful when we need to assess an unknown array of digits
 */
 //$HELPFUL FUNCTIONS:
+
+size_t length(STR_INT* num);
 
 //^ARITHEMTICS:
 /* FOR ALL BINARY OPERATIONS:

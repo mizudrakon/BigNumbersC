@@ -24,8 +24,14 @@ STR_INT_ITERATOR* make_bw_iterator(STR_INT* mom)
 
 int iterator_fw(STR_INT_ITERATOR* it)
 {
-    if (it->data_it == it->mom->LAST_ || it_eq(it,it->mom->End)) {
-        //printf("ERROR: forward iterator called on end\n");
+    if (it->data_it == it->mom->LAST_)
+    {
+        it->part_it = it->mom->End->part_it;
+        it->data_it = it->mom->End->data_it;
+        return 1;
+    }
+    if (it_eq(it,it->mom->End)) {
+        printf("ERROR: forward iterator called on end\n");
         return 0;
     }
     it->data_it++;
@@ -42,7 +48,7 @@ int iterator_bw(STR_INT_ITERATOR* it)
 {
     if (it->part_it == it->mom->HEAD_ && it->data_it == it->mom->HEAD_->DATA)
     { 
-        //printf("ERROR: backward iterator called on begin\n");
+        printf("ERROR: backward iterator called on begin\n");
         return 0;
     }
     it->data_it--;

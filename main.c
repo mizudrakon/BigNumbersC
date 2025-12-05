@@ -114,8 +114,12 @@ int main(int argc, char** argv)
 #ifdef READ_TEST
     STR_INT* sn = new_str_int(base,pt_size);
     printf("Made new STR_INT\n");
+    print_str_int(sn,stdin);
     read_num(sn,stdin);
+    
+    printf("the resulting number is:\n");
     print_str_int(sn,stdout);
+    putc('\n',stdout);
     deleteSTR_INT(sn);
 #endif
 #ifdef TEST

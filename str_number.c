@@ -77,6 +77,12 @@ void deleteSTR_INT(STR_INT* corpse)
 //$CONSTRUCTOR
 
 //^FUNCTIONS
+
+size_t length(STR_INT* num)
+{
+    return (num->TOTAL_PARTS_ - 1) * num->PARTSZ_ + num->TAIL_LENGTH_;
+}
+
 //we want a useful char from number
 //basically the symbol representing the largest allowed digit 1-9 a(10)-z(36)
 char max_digit(size_t b)
