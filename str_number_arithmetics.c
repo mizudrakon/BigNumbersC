@@ -165,7 +165,9 @@ int subtract(STR_INT* a, STR_INT* b, STR_INT* target)
     return 0;
 }
 
+/*
 void convert(STR_INT* num, char new_base)
 {
     
 }
+*/

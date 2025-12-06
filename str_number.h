@@ -86,6 +86,7 @@ int it_eq(const STR_INT_ITERATOR* a, const STR_INT_ITERATOR* b);
 int it_l(const STR_INT_ITERATOR* left, const STR_INT_ITERATOR* right);
 int it_leq(const STR_INT_ITERATOR* left, const STR_INT_ITERATOR* right);
 
+void swap(STR_INT_ITERATOR* left, STR_INT_ITERATOR* right);
 //$ITERATOR:
 
 //^HELPFUL FUNCTIONS:

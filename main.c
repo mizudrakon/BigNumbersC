@@ -7,10 +7,31 @@
 
 #define SIZE 2
 
+void list_nums()
+{
+    //char base = max_digit(b+1);
+    /*the thing is: we usually need the max_digit which is 15, not the actual base which would be 16
+     not sure if I should change the code to enter the actual base...*/
+    int b = 10;
+    STR_INT* a = new_str_int(b,5);
+    for (int i = 1; i <= 40; i++)
+        printf("max digit for base %d: %c\n", i, max_digit(i));
+    printf("list of all numeric characters for base %d:\n",b);
+    for (int i = 1; i <= 140; i++){
+        if (is_cnum_digit(i,a))
+            printf("%c is a digit for base %d\n",i,b);
+    }
+    putchar('\n');
+}
+
 void iterator_test(STR_INT* num)
 {
     STR_INT_ITERATOR* fw_it = make_fw_iterator(num);
     STR_INT_ITERATOR* bw_it = make_bw_iterator(num);
+    if (it_l(fw_it,bw_it))
+        printf("LESS OPERATOR WORKS\n");
+    else
+        printf("LESS OPERATOR DOESN'T WORK!\n");
     //STR_INT_ITERATOR* bw_it = make_bw_iterator(num);
     //MIRRORING loop:
 #ifdef ITERATORS_BASIC
@@ -63,13 +84,7 @@ void iterator_test(STR_INT* num)
 
 void tests(int base, size_t len)
 {
-    const int sz = 2;
     printf("Tests in base %d, partition length %ld\n",base,len);
-    int (*func_array[SIZE])(STR_INT*,STR_INT*,STR_INT*) = {
-        &add,
-        &subtract
-    };
-    char signs[SIZE] = {'+','-'};
     STR_INT *a = new_str_int(base,len);
     print_str_int(a,stdout);
     printf("enter number: ");
@@ -80,14 +95,8 @@ void tests(int base, size_t len)
     printf("regular print: \n");
     printf("a:\n");
     print_str_int(a,stdout);
-    printf("b:\n");
+    printf("\nb:\n");
     print_str_int(b,stdout);
-    for (int i = 0; i < sz; i++)
-    {
-        printf("a %c b:\n", signs[i]);
-        func_array[i](a,b,b);
-        print_str_int(b,stdout);
-    }
 }
 
 /*  limit - repetitions
@@ -98,6 +107,18 @@ void tests(int base, size_t len)
 void test_arithmetic(int (f)(STR_INT*,STR_INT*,STR_INT*), char op_sign, STR_INT* first, STR_INT* second, STR_INT* target)
 {
     int bs;
+    const int sz = 2;
+    int (*func_array[SIZE])(STR_INT*,STR_INT*,STR_INT*) = {
+        &add,
+        &subtract
+    };
+    char signs[SIZE] = {'+','-'};
+    for (int i = 0; i < sz; i++)
+    {
+        printf("a %c b:\n", signs[i]);
+        func_array[i](first,second,second);
+        print_str_int(second,stdout);
+    }
     printf("Insert base:");
     scanf("\n%d",&bs);
     //char base = max_digit(bs+1);
@@ -133,8 +154,9 @@ void print_digits(int base, int range)
 
 int main(int argc, char** argv)
 {
-    size_t pt_size = 10;
-    size_t base = 10;
+    size_t pt_size = 5;
+    size_t base = 16;
+
     char* p; 
     printf("there are %d arguments\n", argc);
     if (argc > 1)
@@ -146,52 +168,6 @@ int main(int argc, char** argv)
         }
         if (*p != '\0') return 0;
     }
-//#define LIST_NUMS 
-#ifdef LIST_NUMS
-    //char base = max_digit(b+1);
-    /*the thing is: we usually need the max_digit which is 15, not the actual base which would be 16
-     not sure if I should change the code to enter the actual base...*/
-    for (int i = 1; i <= 40; i++)
-        printf("max digit for base %d: %c\n", i, max_digit(i));
-    int b = 10;
-    printf("list of all numeric characters for base %d:\n",b);
-    for (int i = 1; i <= 140; i++){
-        if (is_digit(i,max_digit(b)))
-            printf("%c is a digit for base %d\n",i,b);
-    }
-    putchar('\n');
-#endif
-#define RANTEST
-#ifdef RANTEST
 
-#endif
-#define READ_TEST
-#ifdef READ_TEST
-    STR_INT* sn = new_str_int(base,pt_size);
-    printf("Made new STR_INT\n");
-    print_str_int(sn,stdin);
-    read_num(sn,stdin);
-    
-    printf("the resulting number is:\n");
-    print_str_int(sn,stdout);
-    putc('\n',stdout);
-
-    iterator_test(sn);
-
-    deleteSTR_INT(sn);
-#endif
-#ifdef TEST
-    STR_INT* a, *b, *c;
-    test_func(3, str_int_add, '+', a, b, b);
-    test_func(2, str_int_minus, '-', a, b, b);
-#endif
-#ifdef TEST2
-    //realization: char IS an 8 bit number...
-    //C doesn't support overloading
-    char a = 3;
-    char b = 5;
-    if (b < 10)
-        b += a;
-    printf("%d\n",b);
-#endif
+    tests(base,pt_size);
 }

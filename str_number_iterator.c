@@ -31,7 +31,10 @@ int iterator_fw(STR_INT_ITERATOR* it)
         return 1;
     }
     if (it_eq(it,it->mom->End)) {
+
+#ifdef DEBUG
         printf("ERROR: forward iterator called on end\n");
+#endif
         return 0;
     }
     it->data_it++;
@@ -39,6 +42,9 @@ int iterator_fw(STR_INT_ITERATOR* it)
     {
         it->part_it = it->part_it->NEXT;
         it->data_it = it->part_it->DATA;
+#ifdef DEBUG
+        putc('|',stdout);
+#endif
         return 1;
     }
     return 1; //return true 
@@ -48,7 +54,9 @@ int iterator_bw(STR_INT_ITERATOR* it)
 {
     if (it->part_it == it->mom->HEAD_ && it->data_it == it->mom->HEAD_->DATA)
     { 
+#ifdef DEBUG
         printf("ERROR: backward iterator called on begin\n");
+#endif
         return 0;
     }
     it->data_it--;
@@ -57,6 +65,9 @@ int iterator_bw(STR_INT_ITERATOR* it)
         if (it->part_it == it->mom->HEAD_) return 0;
         it->part_it = it->part_it->PREV;
         it->data_it = it->part_it->DATA + it->mom->PARTSZ_ - 1;
+#ifdef DEBUG
+        putc('|',stdout);
+#endif
     }
     return 1;
 }
@@ -65,7 +76,9 @@ int next(STR_INT_ITERATOR* it)
 {
     if (it->direction_fw)
     {
-        //printf("forward iterator next called\n");
+#ifdef DEBUG
+        printf("forward iterator next called\n");
+#endif
         iterator_fw(it);
     }
     else
@@ -80,13 +93,18 @@ int it_eq(const STR_INT_ITERATOR* a, const STR_INT_ITERATOR* b)
 
 int it_l(const STR_INT_ITERATOR* left, const STR_INT_ITERATOR* right)
 {
+    if (left->mom != right->mom)
+    {
+        printf("\nComparing incompatible iterators!!!\n");
+        return 0;
+    }
     if (left->part_it->PART_NUMBER > right->part_it->PART_NUMBER)
         return 0;
-    if (left->part_it == right->part_it)
+    else if (left->part_it == right->part_it)
     {
         return left->data_it < right->data_it;
     }
-    return 0;
+    return 1;
 }
 
 int it_leq(const STR_INT_ITERATOR* left, const STR_INT_ITERATOR* right)
@@ -96,7 +114,9 @@ int it_leq(const STR_INT_ITERATOR* left, const STR_INT_ITERATOR* right)
 
 void swap(STR_INT_ITERATOR* left, STR_INT_ITERATOR* right)
 {
+#ifdef DEBUG
     printf("swapping %c and %c\n", to_symbol(*(left->data_it)), to_symbol(*(right->data_it)));
+#endif
     char help = *(left->data_it);
     *(left->data_it) = *(right->data_it);
     *(right->data_it) = help;

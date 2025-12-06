@@ -3,6 +3,9 @@
 /*appEND_ is special because it pushes num->END_ further, and that's why it needs to call new_si_part*/
 int append(STR_INT* num, char digit)
 {
+#ifdef DEBUG
+    printf("appending %c\n", to_symbol(digit));
+#endif
     //we need to enlarge num
     if (num->End->data_it == num->TAIL_->DATA + num->PARTSZ_)
     {
@@ -93,18 +96,16 @@ void print_str_int(STR_INT* num, FILE* f)
 //READ NUBMER FROM INPUT:
 int read_num(STR_INT* num, FILE* f)
 {
-    printf("reading STR_INT\n");
     char c;
     num->TAIL_LENGTH_ = 0;
     num->LAST_ = num->HEAD_->DATA - 1;
+    next(num->End);
     //we need to allow only numbers < base
     //IGNORE white spaces or any possibly separating symbols in front
     c = getc(f);
     c = to_cnum(c);
-    printf("looking for a number!\n");
     while (c == 0 || !is_cnum_digit(c, num))//ignore leading zeros
     {
-        printf("is %c a digit? %d\n", to_symbol(c), num->BASE_);
         c = getc(f);
         if (c == '$') 
         {
@@ -113,26 +114,20 @@ int read_num(STR_INT* num, FILE* f)
         }
         c = to_cnum(c);
     }
-    printf("found a number and reading...\n");
     //READING THE NUMBER:
-    //STR_INT_PART* part_it = num->HEAD_;
-    //char* data_it = num->HEAD_->DATA; //iterator
     while (is_cnum_digit(c,num))
     {
         append(num, c);
         c = getc(f);
         c = to_cnum(c);
     }
-    putc('\n',stdout);
-    print_str_int(num, stdout);
-    putc('\n',stdout);
     //HERE we mirror the elements of the linked arrays of char, so that every number has its lowest digit on 1
 #define MIRROR
 #ifdef MIRROR
-    printf("Now mirroring!\n");
     STR_INT_ITERATOR* fw_it = make_fw_iterator(num);
     STR_INT_ITERATOR* bw_it = make_bw_iterator(num);
-    while (it_leq(fw_it,bw_it))
+    next(bw_it); //bw iterator starts at the End = just after the last element
+    while (it_l(fw_it,bw_it))
     {
         swap(fw_it, bw_it);
         next(fw_it);
@@ -143,13 +138,3 @@ int read_num(STR_INT* num, FILE* f)
 #endif
     return 0;//zero errors
 }
-
-/*
-int mark(char* num, char base)
-{
-    char* num_it = num;
-    while (is_cnum_digit(*num_it,base)) num_it++;
-    *num_it = '\0';
-    return 0;
-}
-*/

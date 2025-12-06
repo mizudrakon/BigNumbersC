@@ -72,7 +72,10 @@ void deleteSTR_INT(STR_INT* corpse)
     }
     free((void*)part_it);
     free((void*)corpse);
+
+#ifdef DEBUG
     printf("deleted STR_INT\n");
+#endif
 }
 //$CONSTRUCTOR
 
