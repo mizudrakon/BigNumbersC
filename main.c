@@ -104,40 +104,76 @@ void tests(int base, size_t len)
     op_sign
     a, b, c
 */
-void test_arithmetic(int (f)(STR_INT*,STR_INT*,STR_INT*), char op_sign, STR_INT* first, STR_INT* second, STR_INT* target)
+
+#define BS 10
+#define SZ 2
+void test_arithmetic()
 {
-    int bs;
-    const int sz = 2;
-    int (*func_array[SIZE])(STR_INT*,STR_INT*,STR_INT*) = {
+    char a[] = "A10.txt";
+    char b[] = "B10.txt";  
+    printf("operating in base: %d\n", BS);
+    int (*func_array[SZ])(STR_INT*,STR_INT*,STR_INT*) = {
         &add,
         &subtract
     };
-    char signs[SIZE] = {'+','-'};
-    for (int i = 0; i < sz; i++)
+    char signs[SZ] = {'+','-'};
+    
+    STR_INT* A = new_str_int(10,5);
+    FILE* fi;
+    if ((fi = fopen(a,"r")) != NULL)
     {
-        printf("a %c b:\n", signs[i]);
-        func_array[i](first,second,second);
-        print_str_int(second,stdout);
+        read_num(A,fi);
     }
-    printf("Insert base:");
-    scanf("\n%d",&bs);
-    //char base = max_digit(bs+1);
-    printf("base is: %c\n", bs);
-    print_str_int(first,stdout);
+    else 
+    {
+        deleteSTR_INT(A);
+        return;
+    }
+    if (fclose(fi) == EOF) {
+        deleteSTR_INT(A);
+        return;
+    }
     printf("regular print: \n");
-    printf("first:\n");
-    print_str_int(first,stdout);
-    printf("second:\n");
-    print_str_int(second,stdout);
-    printf("first %c second:\n", op_sign);
-    //STR_INT* c = new_str_int(bs,5);
-    f(first,second,target);
-    //str_int_add(a,b,b);
-    print_str_int(target,stdout);
-    printf("deleting first,second,target\n");
-    putchar('\n');
-    deleteSTR_INT(first);
-    deleteSTR_INT(second);
+    printf("A:\n");
+    print_str_int(A,stdout);
+    printf("\n");
+
+    STR_INT* B = new_str_int(10,5);
+    if ((fi = fopen(b,"r")) != NULL)
+    {
+        read_num(B,fi);
+    }
+    else 
+    {
+        deleteSTR_INT(A);
+        deleteSTR_INT(B);
+        return;
+    }
+    if (fclose(fi) == EOF) {
+        deleteSTR_INT(A);
+        deleteSTR_INT(B);
+        return;
+    }
+    printf("B:\n");
+    print_str_int(B,stdout);
+    printf("\n");
+
+    STR_INT* T = new_str_int(10,5);
+    printf("A %c B:\n", signs[0]);
+    func_array[0](A,B,T);
+    printf("result is:");
+    print_str_int(T,stdout);
+    printf("\n");
+
+    printf("T %c A:\n", signs[1]);
+    func_array[1](T,A,B);
+    printf("result is:");
+    print_str_int(B,stdout);
+    printf("\n");
+
+    deleteSTR_INT(A);
+    deleteSTR_INT(B);
+    deleteSTR_INT(T);
 }
 
 void print_digits(int base, int range)
@@ -152,22 +188,13 @@ void print_digits(int base, int range)
     }
 }
 
-int main(int argc, char** argv)
+int main(void)
 {
+#ifdef SETBASE
     size_t pt_size = 5;
     size_t base = 16;
+#endif
 
-    char* p; 
-    printf("there are %d arguments\n", argc);
-    if (argc > 1)
-    {
-        pt_size = strtoul(argv[1],&p,10);
-        if (argc > 2)
-        {
-            base = strtoul(argv[2],&p,10);
-        }
-        if (*p != '\0') return 0;
-    }
-
-    tests(base,pt_size);
+    //tests(base,pt_size);
+    test_arithmetic();
 }

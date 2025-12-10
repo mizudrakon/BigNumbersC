@@ -66,24 +66,26 @@ int add(STR_INT* a, STR_INT* b, STR_INT* target)
     int b_cont = 1;
     while (a_cont && b_cont)
     {
+        printf("%d + %d + %d\n", *a_it->data_it, *b_it->data_it, overflow);
         char sum = *a_it->data_it + *b_it->data_it + overflow;
+        printf("= %d\n",sum);
         insert(t_it, sum % a->BASE_);
         overflow = sum / a->BASE_;
         if (!it_eq(a_it,t_it) && !it_eq(b_it,t_it)) iterator_fw(t_it);
-        a_cont = iterator_fw(a_it);
-        b_cont = iterator_fw(b_it);
+        a_cont = (iterator_fw(a_it) && !it_eq(a_it,a->End));
+        b_cont = (iterator_fw(b_it) && !it_eq(b_it,b->End));
     }
     while (a_cont){
         insert(t_it, *a_it->data_it + overflow);
         overflow = 0;
         if (!it_eq(a_it, t_it)) iterator_fw(t_it);
-        a_cont = iterator_fw(a_it);
+        a_cont = (iterator_fw(a_it) && !it_eq(a_it,a->End));
     }
     while (b_cont){
         insert(t_it, *b_it->data_it + overflow);
         overflow = 0;
         if (!it_eq(b_it, t_it)) iterator_fw(t_it);
-        b_cont = iterator_fw(b_it);
+        b_cont = (iterator_fw(b_it) && !it_eq(b_it,b->End));
     }
     if (overflow){
         insert(t_it, 1);
