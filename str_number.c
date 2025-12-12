@@ -26,6 +26,7 @@ int new_si_part(STR_INT* mom)
     part->PART_NUMBER = mom->TOTAL_PARTS_;//the new part's number is the current total n/n
     if ((part->DATA = (char*)malloc(mom->PARTSZ_ * sizeof(char))) == NULL)//allocate storage
     {    printf("str_int_part data malloc failed\n"); return 1;}
+    mom->SIGN = '+';
     return 0;//no failure
 }
 

@@ -22,6 +22,7 @@ typedef struct str_int_iterator STR_INT_ITERATOR;
 typedef struct str_int
 {
     char BASE_;//numeric base of the number
+    char SIGN;
     size_t TOTAL_PARTS_;//number of str_int_parts in total
     size_t PARTSZ_;//size of a single part
     size_t TAIL_LENGTH_;//how far is the last part of allocated memory filled
@@ -108,6 +109,9 @@ int append(STR_INT* num, char digit);
 /*appends a digit to the end of the number*/
 
 int insert(STR_INT_ITERATOR* num_it, char digit);
+
+int pop_back(STR_INT*num);
+//removes last element (most significant number)
 
 void formated_print_str_int(STR_INT* num, FILE* f,char brk, size_t line_len);
 //print with possibility of adding new_lines, brk is meant as bool, line len is the required lenght

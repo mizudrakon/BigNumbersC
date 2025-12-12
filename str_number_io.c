@@ -44,6 +44,24 @@ int insert(STR_INT_ITERATOR* num_it, char digit)
     return 0;
 }
 
+int pop_back(STR_INT*num)
+{
+    iterator_bw(num->End);
+    if (num->End->data_it == num->TAIL_->DATA)
+    {
+        STR_INT_PART* new_tail = num->TAIL_->PREV;
+        free((void*)num->TAIL_);
+        num->TAIL_ = new_tail;
+        num->End->data_it = num->TAIL_->DATA + num->PARTSZ_;
+        num->LAST_ = num->TAIL_->DATA + num->PARTSZ_ - 1;
+    }
+    else 
+    {
+        num->LAST_ = num->End->data_it - 1;
+    }
+    return 1;
+}
+
 void formated_print_str_int(STR_INT* num, FILE* f, char brk, size_t line_len)//prints a number string to chosen output
 {
     size_t charCount = 0;

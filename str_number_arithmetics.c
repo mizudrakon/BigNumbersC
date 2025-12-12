@@ -106,13 +106,16 @@ int subtract(STR_INT* a, STR_INT* b, STR_INT* target)
     STR_INT_ITERATOR* a_it = make_fw_iterator(a);
     STR_INT_ITERATOR* b_it = make_fw_iterator(b);
     STR_INT_ITERATOR* t_it = target_setup(a_it, b_it, target);
-
+    printf("subtraction target after setup:\n");
+    print_str_int(target, stdout);
+    printf("\n");
     char overflow = 0;//overflow tmp
     int a_cont = 1;
     int b_cont = 1;
     char sum = 0; 
     while (a_cont && b_cont)
     {
+        printf("%d - %d = ", *a_it->data_it , *b_it->data_it + overflow);
         if (*a_it->data_it >= *b_it->data_it + overflow) //same as add but minus
         {    
             sum = *a_it->data_it - *b_it->data_it - overflow;
@@ -123,10 +126,11 @@ int subtract(STR_INT* a, STR_INT* b, STR_INT* target)
             sum = *a_it->data_it + a->BASE_ - *b_it->data_it - overflow; 
             overflow = 1;
         }
+        printf("%d\n", sum);
         insert(t_it, sum);
         if (!it_eq(a_it,t_it) && !it_eq(b_it,t_it)) iterator_fw(t_it);
-        a_cont = iterator_fw(a_it);
-        b_cont = iterator_fw(b_it);
+        a_cont = (iterator_fw(a_it) && !it_eq(a_it,a->End));
+        b_cont = (iterator_fw(b_it) && !it_eq(b_it,b->End));
     }
     while (a_cont && overflow){//the main complication is that the a digit can be 0 -> base - overflow
         if (*a_it->data_it < overflow) 
@@ -137,9 +141,8 @@ int subtract(STR_INT* a, STR_INT* b, STR_INT* target)
         
         insert(t_it, sum);
         overflow = 0;
-        if (!it_eq(a_it, t_it))
-            iterator_fw(t_it);
-        a_cont = iterator_fw(a_it);
+        iterator_fw(t_it);
+        a_cont = (iterator_fw(a_it) && !it_eq(a_it,a->End));
     }
     while (b_cont){//a digit is always 0 and overflow is always 1
         insert(t_it, a->BASE_ - *b_it->data_it - overflow);//t_it doesn't move
@@ -152,18 +155,45 @@ int subtract(STR_INT* a, STR_INT* b, STR_INT* target)
         insert(t_it, a->BASE_ - 1);
         iterator_fw(t_it);
     }
-    //we need to mark the END_ correctly by backtracking to last non-0 
-    if (t_it->data_it == t_it->mom->LAST_)
+    //we need to mark the End correctly by backtracking to last non-0 
+    printf("target before cutting: ");
+    print_str_int(target,stdout);
+    printf("\n");
+    //printf("t_it = %d\n", *t_it->data_it);
+    if (it_eq(t_it, target->End))
         iterator_bw(t_it);
-    while (*t_it->data_it == 0) iterator_bw(t_it);
+    while (*t_it->data_it == 0)
+    { 
+        printf("cutting: %d\n", *t_it->data_it);
+        iterator_bw(t_it);
+        if (t_it->part_it->PART_NUMBER < target->TAIL_->PART_NUMBER)
+        {
+            free((void*)target->TAIL_);
+            target->TAIL_ = t_it->part_it;
+            target->TOTAL_PARTS_--;
+        }
+    }
+    //printf("t_it = %d\n", *t_it->data_it);
+    target->LAST_ = t_it->data_it;
+    //printf("target->LAST_ = %d\n", *target->LAST_);
     iterator_fw(t_it);
-    t_it->mom->LAST_ = t_it->data_it;
-
+    free((void*)target->End);
+    target->End = t_it;
+    
+    printf("target after cutting: ");
+    print_str_int(target,stdout);
+    printf("\n");
+    //printf("Where is the END and LAST?\n");
+    //printf("End: %d LAST: %d\n",*target->End->data_it,*target->LAST_);
+    //iterator_bw(t_it);
+    //printf("t_it: %d\n", *t_it->data_it);
     //deallocation:
-    if (!it_eq(a_it, t_it) && !it_eq(b_it, t_it))
-        free((void*)t_it);
+    //if (!it_eq(a_it, t_it) && !it_eq(b_it, t_it))
+    //    free((void*)t_it);
+    //printf("all done, let's free memory\n");
     free((void*)a_it);
     free((void*)b_it);
+    //printf("memory freed\n");
     return 0;
 }
 

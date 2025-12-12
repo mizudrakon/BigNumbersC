@@ -154,21 +154,40 @@ void test_arithmetic()
         deleteSTR_INT(B);
         return;
     }
-    printf("B:\n");
-    print_str_int(B,stdout);
-    printf("\n");
 
     STR_INT* T = new_str_int(10,5);
-    printf("A %c B:\n", signs[0]);
-    func_array[0](A,B,T);
-    printf("result is:");
+    printf("A: ");
+    print_str_int(A,stdout);
+    printf("\n");
+    printf("B: ");
+    print_str_int(B,stdout);
+    printf("\n");
+    printf("T: ");
     print_str_int(T,stdout);
     printf("\n");
 
-    printf("T %c A:\n", signs[1]);
-    func_array[1](T,A,B);
-    printf("result is:");
+    printf("A %c B = T:\n", signs[0]);
+    func_array[0](A,B,T);
+    printf("A: ");
+    print_str_int(A,stdout);
+    printf("\n");
+    printf("B: ");
     print_str_int(B,stdout);
+    printf("\n");
+    printf("T: ");
+    print_str_int(T,stdout);
+    printf("\n");
+
+    printf("T %c B = A:\n", signs[1]);
+    func_array[1](T,B,A);
+    printf("A: ");
+    print_str_int(A,stdout);
+    printf("\n");
+    printf("B: ");
+    print_str_int(B,stdout);
+    printf("\n");
+    printf("T: ");
+    print_str_int(T,stdout);
     printf("\n");
 
     deleteSTR_INT(A);
