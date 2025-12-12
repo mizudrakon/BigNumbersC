@@ -46,7 +46,8 @@ int insert(STR_INT_ITERATOR* num_it, char digit)
 
 int pop_back(STR_INT*num)
 {
-    iterator_bw(num->End);
+    if (!iterator_bw(num->End))
+        return 0;
     if (num->End->data_it == num->TAIL_->DATA)
     {
         STR_INT_PART* new_tail = num->TAIL_->PREV;
