@@ -59,11 +59,18 @@ STR_INT* new_str_int(char base, size_t part_len)
     return strnum;
 }
 
+//#define DEBUG
 //cleaning STR_INT data
 void deleteSTR_INT(STR_INT* corpse)
 {
+#ifdef DEBUG
+    printf("deleting STR_INT\n");
+#endif
     free((void*)corpse->Begin);
     free((void*)corpse->End);
+#ifdef DEBUG
+    printf("deleted STR_INT Begin and End iterators\n");
+#endif
     STR_INT_PART* part_it = corpse->HEAD_;
     for (; part_it != NULL; part_it = part_it->NEXT)
     {
@@ -71,6 +78,9 @@ void deleteSTR_INT(STR_INT* corpse)
         if (part_it->PREV!=NULL)
             free((void*)part_it->PREV);
     }
+#ifdef DEBUG
+    printf("deleted STR_INT data\n");
+#endif
     free((void*)part_it);
     free((void*)corpse);
 

@@ -215,5 +215,26 @@ int main(void)
 #endif
 
     //tests(base,pt_size);
-    test_arithmetic();
+    //test_arithmetic();
+    FILE* f;
+    if ((f = fopen("num.txt","r")) == NULL){
+        printf("failed opening file\n");
+        return 1;
+    } 
+    STR_INT* num = new_str_int(10,5);
+    read_num(num, f);
+    if (fclose(f) == EOF)
+    {
+        printf("failed closing file\n");
+        return 1;
+    }
+    print_str_int(num,stdout);
+    printf("\n");
+    //while(pop_back(num))
+    while(shift_right(num))
+    {
+        print_str_int(num,stdout);
+        printf("length: %ld\n", length(num));
+    }
+    deleteSTR_INT(num);
 }

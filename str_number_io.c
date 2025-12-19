@@ -46,20 +46,63 @@ int insert(STR_INT_ITERATOR* num_it, char digit)
 
 int pop_back(STR_INT*num)
 {
-    if (!iterator_bw(num->End))
+    if (!iterator_bw(num->End) || length(num) == 1)
+    {
+        //printf("can't pop\n");
         return 0;
+    }
+    num->TAIL_LENGTH_--;
     if (num->End->data_it == num->TAIL_->DATA)
     {
         STR_INT_PART* new_tail = num->TAIL_->PREV;
         free((void*)num->TAIL_);
         num->TAIL_ = new_tail;
+        num->TOTAL_PARTS_--;
+        num->TAIL_LENGTH_ = num->PARTSZ_;
         num->End->data_it = num->TAIL_->DATA + num->PARTSZ_;
-        num->LAST_ = num->TAIL_->DATA + num->PARTSZ_ - 1;
+        num->End->part_it = num->TAIL_;
+        num->TAIL_->NEXT = NULL;
     }
-    else 
+    num->LAST_ = num->End->data_it - 1;
+    return 1;
+}
+
+int shift_left(STR_INT* num)
+{
+    append(num, 0);
+    STR_INT_ITERATOR* it = make_bw_iterator(num);
+    STR_INT_ITERATOR* prev_it = make_bw_iterator(num);
+    while (next(it))
     {
-        num->LAST_ = num->End->data_it - 1;
+        swap_digit(prev_it,it);
+        next(prev_it);
     }
+    free((void*)it);
+    free((void*)prev_it);
+    return 1;
+}
+
+int shift_right(STR_INT* num)
+{
+    if (length(num) == 1)
+    {
+        return 0;
+    }
+    STR_INT_ITERATOR* it = make_fw_iterator(num);
+    STR_INT_ITERATOR* prev_it = make_fw_iterator(num);
+    //printf("prev_it: %d, it: %d\n", *prev_it->data_it, *it->data_it);
+    for (int i = 0; i < 10; i++)
+    //while (next(it))
+    {
+        next(it);
+        printf("swapping it: %d, prev_it: %d\n", *it->data_it, *prev_it->data_it);
+        swap_digit(it,prev_it);
+        next(prev_it);
+        printf("swapped: it: %d, prev_it: %d\n", *it->data_it, *prev_it->data_it);
+    }
+    //pop_back(num);
+    free((void*)it);
+    free((void*)prev_it);
     return 1;
 }
 
@@ -148,7 +191,7 @@ int read_num(STR_INT* num, FILE* f)
     next(bw_it); //bw iterator starts at the End = just after the last element
     while (it_l(fw_it,bw_it))
     {
-        swap(fw_it, bw_it);
+        swap_digit(fw_it, bw_it);
         next(fw_it);
         next(bw_it);
     }

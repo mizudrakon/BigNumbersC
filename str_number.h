@@ -87,7 +87,7 @@ int it_eq(const STR_INT_ITERATOR* a, const STR_INT_ITERATOR* b);
 int it_l(const STR_INT_ITERATOR* left, const STR_INT_ITERATOR* right);
 int it_leq(const STR_INT_ITERATOR* left, const STR_INT_ITERATOR* right);
 
-void swap(STR_INT_ITERATOR* left, STR_INT_ITERATOR* right);
+void swap_digit(STR_INT_ITERATOR* left, STR_INT_ITERATOR* right);
 //$ITERATOR:
 
 //^HELPFUL FUNCTIONS:
@@ -110,8 +110,15 @@ int append(STR_INT* num, char digit);
 
 int insert(STR_INT_ITERATOR* num_it, char digit);
 
-int pop_back(STR_INT*num);
+int pop_back(STR_INT* num);
 //removes last element (most significant number)
+
+//shift operations won't be practical in multiplication...
+int shift_left(STR_INT* num);
+//operation equivalent to num * base
+
+int shift_right(STR_INT* num);
+//operation equivalent to num div base
 
 void formated_print_str_int(STR_INT* num, FILE* f,char brk, size_t line_len);
 //print with possibility of adding new_lines, brk is meant as bool, line len is the required lenght

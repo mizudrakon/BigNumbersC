@@ -50,6 +50,7 @@ int iterator_fw(STR_INT_ITERATOR* it)
     return 1; //return true 
 }
 
+//#define DEBUG
 int iterator_bw(STR_INT_ITERATOR* it)
 {
     if (it->part_it == it->mom->HEAD_ && it->data_it == it->mom->HEAD_->DATA)
@@ -112,7 +113,7 @@ int it_leq(const STR_INT_ITERATOR* left, const STR_INT_ITERATOR* right)
     return it_eq(left, right) || it_l(left, right);
 }
 
-void swap(STR_INT_ITERATOR* left, STR_INT_ITERATOR* right)
+void swap_digit(STR_INT_ITERATOR* left, STR_INT_ITERATOR* right)
 {
 #ifdef DEBUG
     printf("swapping %c and %c\n", to_symbol(*(left->data_it)), to_symbol(*(right->data_it)));
