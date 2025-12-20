@@ -67,40 +67,44 @@ int pop_back(STR_INT*num)
     return 1;
 }
 
-int shift_left(STR_INT* num)
+int shift_left(STR_INT* num, size_t shift)
 {
-    append(num, 0);
+    for (size_t i = 1; i <= shift; i++)
+        append(num, 0);
     STR_INT_ITERATOR* it = make_bw_iterator(num);
     STR_INT_ITERATOR* prev_it = make_bw_iterator(num);
-    while (next(it))
+    for (size_t i = 1; i < shift; i++)
+        iterator_bw(it);
+    while (iterator_bw(it))
     {
-        swap_digit(prev_it,it);
-        next(prev_it);
+        swap_digit(it,prev_it);
+        iterator_bw(prev_it);
     }
     free((void*)it);
     free((void*)prev_it);
     return 1;
 }
 
-int shift_right(STR_INT* num)
+int shift_right(STR_INT* num, size_t shift)
 {
     if (length(num) == 1)
     {
         return 0;
     }
+
     STR_INT_ITERATOR* it = make_fw_iterator(num);
     STR_INT_ITERATOR* prev_it = make_fw_iterator(num);
-    //printf("prev_it: %d, it: %d\n", *prev_it->data_it, *it->data_it);
-    for (int i = 0; i < 10; i++)
-    //while (next(it))
+    for (size_t i = 1; i <= shift; i++)
+        iterator_fw(it);
+    while (it_l(it,num->End))
     {
-        next(it);
-        printf("swapping it: %d, prev_it: %d\n", *it->data_it, *prev_it->data_it);
         swap_digit(it,prev_it);
-        next(prev_it);
-        printf("swapped: it: %d, prev_it: %d\n", *it->data_it, *prev_it->data_it);
+        iterator_fw(prev_it);
+        iterator_fw(it);
     }
-    //pop_back(num);
+    while (shift-- >= 1){
+        pop_back(num);
+    }
     free((void*)it);
     free((void*)prev_it);
     return 1;
@@ -199,4 +203,23 @@ int read_num(STR_INT* num, FILE* f)
     free((void*)bw_it);
 #endif
     return 0;//zero errors
+}
+
+int num_from_string(STR_INT* num, char* text)
+{
+    if (length(num) > 1)
+    {
+        reset(num);
+    }
+    size_t size = 0;
+    char *c = text;
+    while (*c++ != '\0') size++;
+    size--;
+    *(num->HEAD_->DATA) = to_cnum(text[size--]);
+    for (;size >= 1; size--)
+    {
+        append(num,to_cnum(text[size]));
+    }
+    append(num,to_cnum(*text));
+    return 1;
 }

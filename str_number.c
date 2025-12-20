@@ -59,6 +59,14 @@ STR_INT* new_str_int(char base, size_t part_len)
     return strnum;
 }
 
+void reset(STR_INT* num)
+{
+    char base = num->BASE_;
+    size_t partsz = num->PARTSZ_;
+    deleteSTR_INT(num);
+    num = new_str_int(base,partsz);
+}
+
 //#define DEBUG
 //cleaning STR_INT data
 void deleteSTR_INT(STR_INT* corpse)

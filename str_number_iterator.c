@@ -72,7 +72,7 @@ int iterator_bw(STR_INT_ITERATOR* it)
     }
     return 1;
 }
-
+//#undef DEBUG
 int next(STR_INT_ITERATOR* it)
 {
     if (it->direction_fw)
@@ -85,6 +85,11 @@ int next(STR_INT_ITERATOR* it)
     else
         iterator_bw(it);
     return 1;
+}
+
+char value(STR_INT_ITERATOR* it)
+{
+    return *(it->data_it);
 }
 
 int it_eq(const STR_INT_ITERATOR* a, const STR_INT_ITERATOR* b)
@@ -113,6 +118,7 @@ int it_leq(const STR_INT_ITERATOR* left, const STR_INT_ITERATOR* right)
     return it_eq(left, right) || it_l(left, right);
 }
 
+//#define DEBUG
 void swap_digit(STR_INT_ITERATOR* left, STR_INT_ITERATOR* right)
 {
 #ifdef DEBUG

@@ -66,9 +66,9 @@ int add(STR_INT* a, STR_INT* b, STR_INT* target)
     int b_cont = 1;
     while (a_cont && b_cont)
     {
-        printf("%d + %d + %d\n", *a_it->data_it, *b_it->data_it, overflow);
+        //printf("%d + %d + %d\n", *a_it->data_it, *b_it->data_it, overflow);
         char sum = *a_it->data_it + *b_it->data_it + overflow;
-        printf("= %d\n",sum);
+        //printf("= %d\n",sum);
         insert(t_it, sum % a->BASE_);
         overflow = sum / a->BASE_;
         if (!it_eq(a_it,t_it) && !it_eq(b_it,t_it)) iterator_fw(t_it);
@@ -106,16 +106,20 @@ int subtract(STR_INT* a, STR_INT* b, STR_INT* target)
     STR_INT_ITERATOR* a_it = make_fw_iterator(a);
     STR_INT_ITERATOR* b_it = make_fw_iterator(b);
     STR_INT_ITERATOR* t_it = target_setup(a_it, b_it, target);
+#ifdef DEBUG
     printf("subtraction target after setup:\n");
     print_str_int(target, stdout);
     printf("\n");
+#endif
     char overflow = 0;//overflow tmp
     int a_cont = 1;
     int b_cont = 1;
     char sum = 0; 
     while (a_cont && b_cont)
     {
+#ifdef DEBUG
         printf("%d - %d = ", *a_it->data_it , *b_it->data_it + overflow);
+#endif
         if (*a_it->data_it >= *b_it->data_it + overflow) //same as add but minus
         {    
             sum = *a_it->data_it - *b_it->data_it - overflow;
@@ -126,7 +130,9 @@ int subtract(STR_INT* a, STR_INT* b, STR_INT* target)
             sum = *a_it->data_it + a->BASE_ - *b_it->data_it - overflow; 
             overflow = 1;
         }
+#ifdef DEBUG
         printf("%d\n", sum);
+#endif
         insert(t_it, sum);
         if (!it_eq(a_it,t_it) && !it_eq(b_it,t_it)) iterator_fw(t_it);
         a_cont = (iterator_fw(a_it) && !it_eq(a_it,a->End));
@@ -156,15 +162,19 @@ int subtract(STR_INT* a, STR_INT* b, STR_INT* target)
         iterator_fw(t_it);
     }
     //we need to mark the End correctly by backtracking to last non-0 
+#ifdef DEBUG
     printf("target before cutting: ");
     print_str_int(target,stdout);
     printf("\n");
     //printf("t_it = %d\n", *t_it->data_it);
+#endif
     if (it_eq(t_it, target->End))
         iterator_bw(t_it);
     while (*t_it->data_it == 0)
     { 
+#ifdef DEBUG
         printf("cutting: %d\n", *t_it->data_it);
+#endif
         iterator_bw(t_it);
         if (t_it->part_it->PART_NUMBER < target->TAIL_->PART_NUMBER)
         {
@@ -180,6 +190,7 @@ int subtract(STR_INT* a, STR_INT* b, STR_INT* target)
     free((void*)target->End);
     target->End = t_it;
     
+#ifdef DEBUG
     printf("target after cutting: ");
     print_str_int(target,stdout);
     printf("\n");
@@ -191,6 +202,7 @@ int subtract(STR_INT* a, STR_INT* b, STR_INT* target)
     //if (!it_eq(a_it, t_it) && !it_eq(b_it, t_it))
     //    free((void*)t_it);
     //printf("all done, let's free memory\n");
+#endif
     free((void*)a_it);
     free((void*)b_it);
     //printf("memory freed\n");

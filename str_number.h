@@ -49,6 +49,8 @@ STR_INT* new_str_int(char base, size_t part_len);
 //STR_INT* new_str_int(size_t base_num, size_t part_len);
 /*creating a new handle for a number*/
 
+void reset(STR_INT* num);
+
 void deleteSTR_INT(STR_INT* corpse);
 /*cleaning function to free the memory*/
 
@@ -67,11 +69,11 @@ typedef struct str_int_iterator
 
 STR_INT_ITERATOR* make_fw_iterator(STR_INT* mom);
 //iterator that starts at head->data
-#define make_forward_iterator(mom)(return make_fw_iterator(mom))
+//#define make_forward_iterator(mom)(return make_fw_iterator(mom))
 
 STR_INT_ITERATOR* make_bw_iterator(STR_INT* mom);
 //iterator that starts at the tail->data+tailLength = 1 past the end
-#define make_backward_iterator(mom)(return make_bw_iterator(mom))
+//#define make_backward_iterator(mom)(return make_bw_iterator(mom))
 
 int iterator_fw(STR_INT_ITERATOR* it);
 //move iterator towards the end
@@ -81,6 +83,8 @@ int iterator_bw(STR_INT_ITERATOR* it);
 
 int next(STR_INT_ITERATOR* it);
 //universal call to move iterators
+
+char value(STR_INT_ITERATOR* it);
 
 int it_eq(const STR_INT_ITERATOR* a, const STR_INT_ITERATOR* b);
 //do iterators point to the same thing?
@@ -114,10 +118,10 @@ int pop_back(STR_INT* num);
 //removes last element (most significant number)
 
 //shift operations won't be practical in multiplication...
-int shift_left(STR_INT* num);
+int shift_left(STR_INT* num, size_t shift);
 //operation equivalent to num * base
 
-int shift_right(STR_INT* num);
+int shift_right(STR_INT* num, size_t shift);
 //operation equivalent to num div base
 
 void formated_print_str_int(STR_INT* num, FILE* f,char brk, size_t line_len);
@@ -133,6 +137,8 @@ int read_num(STR_INT* num, FILE* f);
  * calls new_str_int_part() if necessary
  * returns 1 for success and 0 for failure, which might switch, since the opposite might be handier for counting total errors*/
 
+int num_from_string(STR_INT* num, char* text);
+
 //int mark(char* num, char base);
 /*marks the end of the number in the tail
  * this is only useful when we need to assess an unknown array of digits
@@ -146,6 +152,7 @@ size_t length(STR_INT* num);
  * target = a operation b
  * target can be specified as a or b, or it needs to be new_str_int() first
  */
+ 
 int identical(STR_INT* left, STR_INT* right);
 
 int equal(STR_INT* left, STR_INT* right);

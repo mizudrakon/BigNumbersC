@@ -207,6 +207,34 @@ void print_digits(int base, int range)
     }
 }
 
+void shift_tests()
+{
+    FILE* f;
+    if ((f = fopen("num.txt","r")) == NULL){
+        printf("failed opening file\n");
+        return;
+    } 
+    STR_INT* num = new_str_int(10,5);
+    read_num(num, f);
+    if (fclose(f) == EOF)
+    {
+        printf("failed closing file\n");
+        return;
+    }
+    print_str_int(num,stdout);
+    printf("\n");
+    //while(pop_back(num))
+    for (int i = 0; i < 4; i++)
+    //while(shift_right(num))
+    {
+        //shift_right(num,3);
+        shift_left(num,2);
+        print_str_int(num,stdout);
+        printf("\nlength: %ld\n", length(num));
+    }
+    deleteSTR_INT(num);
+}
+
 int main(void)
 {
 #ifdef SETBASE
@@ -216,25 +244,5 @@ int main(void)
 
     //tests(base,pt_size);
     //test_arithmetic();
-    FILE* f;
-    if ((f = fopen("num.txt","r")) == NULL){
-        printf("failed opening file\n");
-        return 1;
-    } 
-    STR_INT* num = new_str_int(10,5);
-    read_num(num, f);
-    if (fclose(f) == EOF)
-    {
-        printf("failed closing file\n");
-        return 1;
-    }
-    print_str_int(num,stdout);
-    printf("\n");
-    //while(pop_back(num))
-    while(shift_right(num))
-    {
-        print_str_int(num,stdout);
-        printf("length: %ld\n", length(num));
-    }
-    deleteSTR_INT(num);
+    shift_tests();
 }
