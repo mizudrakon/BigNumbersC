@@ -73,6 +73,9 @@ int shift_left(STR_INT* num, size_t shift)
         append(num, 0);
     STR_INT_ITERATOR* it = make_bw_iterator(num);
     STR_INT_ITERATOR* prev_it = make_bw_iterator(num);
+    //bw iterators start pointing at End right after the appended 0, so extra move is necessary
+    iterator_bw(prev_it);
+    iterator_bw(it);
     for (size_t i = 1; i < shift; i++)
         iterator_bw(it);
     while (iterator_bw(it))

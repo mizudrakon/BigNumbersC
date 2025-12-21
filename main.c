@@ -228,7 +228,7 @@ void shift_tests()
     //while(shift_right(num))
     {
         //shift_right(num,3);
-        shift_left(num,2);
+        shift_left(num,3);
         print_str_int(num,stdout);
         printf("\nlength: %ld\n", length(num));
     }
