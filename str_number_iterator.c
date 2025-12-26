@@ -22,6 +22,20 @@ STR_INT_ITERATOR* make_bw_iterator(STR_INT* mom)
     return it;
 }
 
+void it_reset(STR_INT_ITERATOR* it)
+{
+    if (it->direction_fw)
+    {
+        it->part_it = it->mom->HEAD_;
+        it->data_it = it->mom->HEAD_->DATA;
+    }
+    else 
+    {
+        it->part_it = it->mom->TAIL_;
+        it->data_it = it->mom->LAST_+1;
+    }
+}
+
 int iterator_fw(STR_INT_ITERATOR* it)
 {
     if (it->data_it == it->mom->LAST_)

@@ -209,6 +209,30 @@ int subtract(STR_INT* a, STR_INT* b, STR_INT* target)
     return 0;
 }
 
+int mult(STR_INT* a, STR_INT* b, STR_INT* target)
+{
+    if (base_not_eq(a,b)) 
+        return 1;
+    //forward iterators for a,b
+    STR_INT_ITERATOR* a_it = make_fw_iterator(a);
+    STR_INT_ITERATOR* b_it = make_fw_iterator(b);
+    //we can't use a or b as targets even if they are intended as such
+    STR_INT* t_it = new_str_int(target->BASE_,target->PARTSZ_);
+    STR_INT* start_p = new_str_int(target->BASE_,target->PARTSZ_);
+    
+    while (it_l(a_it,a->End))
+    {
+        while (it_l(b_it, b->End))
+        {
+            //multiply and add to t
+        }
+        it_reset(b_it);
+        iterator_fw(start_p);
+        //set_it(t_it,start_p); need to define
+    }
+    return 0;
+}
+
 /*
 void convert(STR_INT* num, char new_base)
 {

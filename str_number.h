@@ -168,7 +168,7 @@ int subtract(STR_INT* a, STR_INT* b, STR_INT* target);
 #define subtract_from(a,b)(return subtract(a,b,a))
 
 int mult(STR_INT* a, STR_INT* b, STR_INT* target);
-#define mult(a,b)(return mult(a,b,a))
+#define times(a,b)(return mult(a,b,a))
 
 int divide(STR_INT* a, STR_INT* b, STR_INT* target);
 #define divide(a,b)(return div(a,b,a))
