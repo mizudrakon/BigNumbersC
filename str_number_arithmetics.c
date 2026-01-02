@@ -214,21 +214,38 @@ int mult(STR_INT* a, STR_INT* b, STR_INT* target)
     if (base_not_eq(a,b)) 
         return 1;
     //forward iterators for a,b
+    STR_INT* t = new_str_int(target->BASE_,target->PARTSZ_);
     STR_INT_ITERATOR* a_it = make_fw_iterator(a);
     STR_INT_ITERATOR* b_it = make_fw_iterator(b);
     //we can't use a or b as targets even if they are intended as such
-    STR_INT* t_it = new_str_int(target->BASE_,target->PARTSZ_);
-    STR_INT* start_p = new_str_int(target->BASE_,target->PARTSZ_);
-    
-    while (it_l(a_it,a->End))
+    STR_INT_ITERATOR* t_it = make_fw_iterator(t);
+    STR_INT_ITERATOR* start_p = make_fw_iterator(t);
+    char h = 0;
+    char overfl = 0;
+    while (it_l(b_it,b->End))
     {
-        while (it_l(b_it, b->End))
+        set_it(t_it,start_p);
+        while (it_l(a_it, a->End))
         {
             //multiply and add to t
+            if (it_eq(t_it,target->End))
+            {
+                append(t,0);
+                t_it->data_it = t->LAST_;
+                t_it->part_it = t->TAIL_;
+            }
+            h = value(t_it)+vlue(a_it)*value(b_it);
+            overfl = h / target->BASE_;
+            h %= target->BASE_;
+            set_value(t_it,h);
         }
-        it_reset(b_it);
+        it_reset(a_it);
         iterator_fw(start_p);
-        //set_it(t_it,start_p); need to define
+    }
+    if (overfl)
+    {
+        append(t,0);
+        set_value(t->LAST_,overfl); 
     }
     return 0;
 }

@@ -84,7 +84,10 @@ int iterator_bw(STR_INT_ITERATOR* it);
 int next(STR_INT_ITERATOR* it);
 //universal call to move iterators
 
-char value(STR_INT_ITERATOR* it);
+char get_value(STR_INT_ITERATOR* it);
+void set_value(STR_INT_ITERATOR* it, char cnum);
+
+void set_it(STR_INT_ITERATOR* ls, STR_INT_ITERATOR* rs);
 
 int it_eq(const STR_INT_ITERATOR* a, const STR_INT_ITERATOR* b);
 //do iterators point to the same thing?

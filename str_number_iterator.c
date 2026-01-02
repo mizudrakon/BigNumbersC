@@ -106,6 +106,17 @@ char value(STR_INT_ITERATOR* it)
     return *(it->data_it);
 }
 
+void set_value(STR_INT_ITERATOR* it, char cnum)
+{
+    *(it->data_it) = cnum;
+}
+
+void set_it(STR_INT_ITERATOR* ls, STR_INT_ITERATOR* rs)
+{
+    ls->data_it = rs->data_it;
+    ls->part_it = rs->part_it;
+}
+
 int it_eq(const STR_INT_ITERATOR* a, const STR_INT_ITERATOR* b)
 {
     return a->data_it == b->data_it;
