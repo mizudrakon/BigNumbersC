@@ -239,19 +239,46 @@ void mult_test()
 {
     size_t pt_size = 5;
     size_t base = 10;
-    STRINT* a = new_strint(base,pt_size);
-    read_strint_file(a,"am.txt");
-    STRINT* b = new_strint(base,pt_size);
-    read_strint_file(b,"bm.txt");
-    STRINT* t = new_strint(base,pt_size);
+    FILE* f;
+    if ((f = fopen("mult_test.txt","r")) == NULL){
+        printf("failed opening file\n");
+        return;
+    } 
     printf("Multiplication test:\n");
-    print_strint(a,stdout);
-    printf("\n");
-    print_strint(b,stdout);
-    printf("\n=\n");
-    mult(a,b,t);
-    print_strint(t,stdout);
-    printf("\n");
+    while (getc(f) != 'q')
+    {
+        STRINT* a = new_strint(base,pt_size);
+        read_strint(a,f);
+        STRINT* b = new_strint(base,pt_size);
+        read_strint(b,f);
+        STRINT* r = new_strint(base,pt_size);
+        read_strint(r,f);
+        STRINT* t = new_strint(base,pt_size);
+
+        print_strint(a,stdout);
+        printf("\n");
+        print_strint(b,stdout);
+        printf("\n=\n");
+        mult(a,b,t);
+        print_strint(t,stdout);
+        printf("\n");
+        print_strint(r,stdout);
+        printf("?\n");
+        int test = equal(r,t);
+        if (test)
+            printf("good\n");
+        
+        deleteSTRINT(a);
+        deleteSTRINT(b);
+        deleteSTRINT(r);
+        deleteSTRINT(t);
+        if (!test)
+        {
+            printf("bad\n");
+            break;
+        }
+    }
+    fclose(f);
 }
 
 int main(void)

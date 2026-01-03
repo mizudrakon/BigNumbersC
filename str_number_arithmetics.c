@@ -22,7 +22,7 @@ int equal(STRINT* left, STRINT* right)
     int mark = 1;
     while (it_eq(left_it,left->End))
     {
-        if (left_it->data_it != right_it->data_it || it_eq(right_it,right->End))
+        if (it_value(left_it) != it_value(right_it) || it_eq(right_it,right->End))
         {
             mark = 0;
             break;

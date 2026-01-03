@@ -230,10 +230,18 @@ int read_strint_string(STRINT* num, char* text)
 int read_strint_file(STRINT* num, char* file_name)
 {
     FILE* sourcef;
+    int r = 0;
     if ((sourcef = fopen(file_name,"r")) == NULL)
     {
         printf("failed opening file\n");
         return 0;
     }
-    return read_strint(num, sourcef);
+    if (read_strint(num, sourcef))
+        r = 1;
+    if (fclose(sourcef) == EOF)
+    {
+        printf("failed closing file\n");
+        return 0;
+    }
+    return r;
 }
