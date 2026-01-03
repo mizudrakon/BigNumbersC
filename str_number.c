@@ -4,11 +4,11 @@ const char MAX_POSSIBLE_BASE_ = 'z' - 'a' + 11;
 
 //^CONSTRUCTOR
 //this adds a new part to a specified mother, does it need to return a pointer?
-int new_si_part(STR_INT* mom)
+int new_si_part(STRINT* mom)
 {
-    STR_INT_PART* part;
-    if ( (part = (STR_INT_PART*) malloc(sizeof(STR_INT_PART))) == NULL )
-    {    printf("str_int_part basic malloc failed\n"); return 1;}
+    STRINT_PART* part;
+    if ( (part = (STRINT_PART*) malloc(sizeof(STRINT_PART))) == NULL )
+    {    printf("strint_part basic malloc failed\n"); return 1;}
     part->MOTHER = mom;//assign mother
     if (mom->HEAD_ == NULL)//if mother doesn't have a HEAD_ -> part is HEAD_
     {
@@ -25,21 +25,21 @@ int new_si_part(STR_INT* mom)
     mom->TOTAL_PARTS_++;//motehr now hes +1 part
     part->PART_NUMBER = mom->TOTAL_PARTS_;//the new part's number is the current total n/n
     if ((part->DATA = (char*)malloc(mom->PARTSZ_ * sizeof(char))) == NULL)//allocate storage
-    {    printf("str_int_part data malloc failed\n"); return 1;}
+    {    printf("strint_part data malloc failed\n"); return 1;}
     mom->SIGN = '+';
     return 0;//no failure
 }
 
-STR_INT* new_str_int(char base, size_t part_len)
+STRINT* new_strint(char base, size_t part_len)
 {
     if (base > MAX_POSSIBLE_BASE_)
     {
         printf("base %d not supported!", base);
         return NULL;
     }
-    STR_INT* strnum;
-    if ((strnum = (STR_INT*) malloc(sizeof(STR_INT))) == NULL)//allocate struct
-        printf("new_str_int malloc failed\n");
+    STRINT* strnum;
+    if ((strnum = (STRINT*) malloc(sizeof(STRINT))) == NULL)//allocate struct
+        printf("new_strint malloc failed\n");
     strnum->PARTSZ_ = part_len;
     strnum->BASE_ = base;
     strnum->HEAD_ = NULL;
@@ -59,27 +59,27 @@ STR_INT* new_str_int(char base, size_t part_len)
     return strnum;
 }
 
-void reset(STR_INT* num)
+void reset(STRINT* num)
 {
     char base = num->BASE_;
     size_t partsz = num->PARTSZ_;
-    deleteSTR_INT(num);
-    num = new_str_int(base,partsz);
+    deleteSTRINT(num);
+    num = new_strint(base,partsz);
 }
 
 //#define DEBUG
-//cleaning STR_INT data
-void deleteSTR_INT(STR_INT* corpse)
+//cleaning STRINT data
+void deleteSTRINT(STRINT* corpse)
 {
 #ifdef DEBUG
-    printf("deleting STR_INT\n");
+    printf("deleting STRINT\n");
 #endif
     free((void*)corpse->Begin);
     free((void*)corpse->End);
 #ifdef DEBUG
-    printf("deleted STR_INT Begin and End iterators\n");
+    printf("deleted STRINT Begin and End iterators\n");
 #endif
-    STR_INT_PART* part_it = corpse->HEAD_;
+    STRINT_PART* part_it = corpse->HEAD_;
     for (; part_it != NULL; part_it = part_it->NEXT)
     {
         free((void*)part_it->DATA);
@@ -87,20 +87,20 @@ void deleteSTR_INT(STR_INT* corpse)
             free((void*)part_it->PREV);
     }
 #ifdef DEBUG
-    printf("deleted STR_INT data\n");
+    printf("deleted STRINT data\n");
 #endif
     free((void*)part_it);
     free((void*)corpse);
 
 #ifdef DEBUG
-    printf("deleted STR_INT\n");
+    printf("deleted STRINT\n");
 #endif
 }
 //$CONSTRUCTOR
 
 //^FUNCTIONS
 
-size_t length(STR_INT* num)
+size_t length(STRINT* num)
 {
     return (num->TOTAL_PARTS_ - 1) * num->PARTSZ_ + num->TAIL_LENGTH_;
 }
@@ -132,13 +132,13 @@ char to_cnum(char c)
     return '$';
 }
 
-int is_cnum_digit(char cnum, const STR_INT* num)
+int is_cnum_digit(char cnum, const STRINT* num)
 {
     return (cnum == '$') ? 0 : cnum <= (num->BASE_ - 1);
 }
 
 // does the character c represent a digit given the base of our number?
-int is_char_digit(char c, const STR_INT* num)
+int is_char_digit(char c, const STRINT* num)
 {
     return is_cnum_digit(to_cnum(c), num);
 }

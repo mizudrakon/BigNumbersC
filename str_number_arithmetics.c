@@ -1,7 +1,7 @@
 #include "str_number.h"
 
 //ARITHMETICS:
-int base_not_eq(STR_INT* a, STR_INT* b){
+int base_not_eq(STRINT* a, STRINT* b){
     if (a->BASE_ != b->BASE_){ 
         printf("ERROR: only add numbers of same base! %c != %c", a->BASE_+'0', b->BASE_+'0');
         return 1;
@@ -9,16 +9,16 @@ int base_not_eq(STR_INT* a, STR_INT* b){
     return 0;
 }
 
-int identical(STR_INT* left, STR_INT* right){
+int identical(STRINT* left, STRINT* right){
     return left->HEAD_ == right->HEAD_;
 }
 
-int equal(STR_INT* left, STR_INT* right)
+int equal(STRINT* left, STRINT* right)
 {
     if (identical(left,right))
         return 1;
-    STR_INT_ITERATOR* left_it = make_fw_iterator(left);
-    STR_INT_ITERATOR* right_it = make_fw_iterator(right);
+    STRINT_ITERATOR* left_it = make_fw_iterator(left);
+    STRINT_ITERATOR* right_it = make_fw_iterator(right);
     int mark = 1;
     while (it_eq(left_it,left->End))
     {
@@ -38,28 +38,28 @@ int equal(STR_INT* left, STR_INT* right)
     return mark;
 }
 
-STR_INT_ITERATOR* target_setup(STR_INT_ITERATOR* a_it, STR_INT_ITERATOR* b_it, STR_INT* target){
+STRINT_ITERATOR* target_setup(STRINT_ITERATOR* a_it, STRINT_ITERATOR* b_it, STRINT* target){
     if (identical(a_it->mom, target)){
         return a_it;
     }
     else if (identical(b_it->mom, target)){
         return b_it;
     }
-    //target is a new str_int innitiated to 0
+    //target is a new strint innitiated to 0
     target->BASE_ = a_it->mom->BASE_;//we need to common base
     target->TAIL_LENGTH_ = 0;//decrease from 1 to 0
-    STR_INT_ITERATOR* t_it = make_fw_iterator(target);
+    STRINT_ITERATOR* t_it = make_fw_iterator(target);
     return t_it;
 }
 
-int add(STR_INT* a, STR_INT* b, STR_INT* target)
+int add(STRINT* a, STRINT* b, STRINT* target)
 {
     if (base_not_eq(a,b)){ 
         return 1;
     }
-    STR_INT_ITERATOR* a_it = make_fw_iterator(a);
-    STR_INT_ITERATOR* b_it = make_fw_iterator(b);
-    STR_INT_ITERATOR* t_it = target_setup(a_it, b_it, target);
+    STRINT_ITERATOR* a_it = make_fw_iterator(a);
+    STRINT_ITERATOR* b_it = make_fw_iterator(b);
+    STRINT_ITERATOR* t_it = target_setup(a_it, b_it, target);
 
     char overflow = 0;//overflow tmp
     int a_cont = 1;
@@ -98,17 +98,17 @@ int add(STR_INT* a, STR_INT* b, STR_INT* target)
     return 0;
 }
 
-int subtract(STR_INT* a, STR_INT* b, STR_INT* target)
+int subtract(STRINT* a, STRINT* b, STRINT* target)
 {
     if (base_not_eq(a,b)){ 
         return 1;
     }
-    STR_INT_ITERATOR* a_it = make_fw_iterator(a);
-    STR_INT_ITERATOR* b_it = make_fw_iterator(b);
-    STR_INT_ITERATOR* t_it = target_setup(a_it, b_it, target);
+    STRINT_ITERATOR* a_it = make_fw_iterator(a);
+    STRINT_ITERATOR* b_it = make_fw_iterator(b);
+    STRINT_ITERATOR* t_it = target_setup(a_it, b_it, target);
 #ifdef DEBUG
     printf("subtraction target after setup:\n");
-    print_str_int(target, stdout);
+    print_strint(target, stdout);
     printf("\n");
 #endif
     char overflow = 0;//overflow tmp
@@ -164,7 +164,7 @@ int subtract(STR_INT* a, STR_INT* b, STR_INT* target)
     //we need to mark the End correctly by backtracking to last non-0 
 #ifdef DEBUG
     printf("target before cutting: ");
-    print_str_int(target,stdout);
+    print_strint(target,stdout);
     printf("\n");
     //printf("t_it = %d\n", *t_it->data_it);
 #endif
@@ -192,7 +192,7 @@ int subtract(STR_INT* a, STR_INT* b, STR_INT* target)
     
 #ifdef DEBUG
     printf("target after cutting: ");
-    print_str_int(target,stdout);
+    print_strint(target,stdout);
     printf("\n");
     //printf("Where is the END and LAST?\n");
     //printf("End: %d LAST: %d\n",*target->End->data_it,*target->LAST_);
@@ -209,22 +209,26 @@ int subtract(STR_INT* a, STR_INT* b, STR_INT* target)
     return 0;
 }
 
-int mult(STR_INT* a, STR_INT* b, STR_INT* target)
+int mult(STRINT* a, STRINT* b, STRINT* target)
 {
-    if (base_not_eq(a,b)) 
+    if (base_not_eq(a,b) || base_not_eq(a,target)) 
         return 1;
     //forward iterators for a,b
-    STR_INT* t = new_str_int(target->BASE_,target->PARTSZ_);
-    STR_INT_ITERATOR* a_it = make_fw_iterator(a);
-    STR_INT_ITERATOR* b_it = make_fw_iterator(b);
+    STRINT* t;
+    if (identical(a,target) || identical(b,target))
+        t = new_strint(target->BASE_,target->PARTSZ_);
+    else
+        t = target;
+    STRINT_ITERATOR* a_it = make_fw_iterator(a);
+    STRINT_ITERATOR* b_it = make_fw_iterator(b);
     //we can't use a or b as targets even if they are intended as such
-    STR_INT_ITERATOR* t_it = make_fw_iterator(t);
-    STR_INT_ITERATOR* start_p = make_fw_iterator(t);
+    STRINT_ITERATOR* t_it = make_fw_iterator(t);
+    STRINT_ITERATOR* start_p = make_fw_iterator(t);
     char h = 0;
     char overfl = 0;
     while (it_l(b_it,b->End))
     {
-        set_it(t_it,start_p);
+        point_it(t_it,start_p);
         while (it_l(a_it, a->End))
         {
             //multiply and add to t
@@ -234,24 +238,33 @@ int mult(STR_INT* a, STR_INT* b, STR_INT* target)
                 t_it->data_it = t->LAST_;
                 t_it->part_it = t->TAIL_;
             }
-            h = value(t_it)+vlue(a_it)*value(b_it);
+            h = it_value(t_it)+it_value(a_it)*it_value(b_it);
             overfl = h / target->BASE_;
             h %= target->BASE_;
-            set_value(t_it,h);
+            set_it_value(t_it,h);
+            iterator_fw(a_it);
+            iterator_fw(t_it);
         }
         it_reset(a_it);
         iterator_fw(start_p);
+        iterator_fw(b_it);
     }
     if (overfl)
     {
         append(t,0);
-        set_value(t->LAST_,overfl); 
+        *t->LAST_ = overfl; 
+    }
+
+    if (identical(a,target) || identical(b,target))
+    {
+        deleteSTRINT(target);
+        target = t;
     }
     return 0;
 }
 
 /*
-void convert(STR_INT* num, char new_base)
+void convert(STRINT* num, char new_base)
 {
     
 }

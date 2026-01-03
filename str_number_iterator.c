@@ -2,9 +2,9 @@
 
 //^ITERATOR 
 //make forward iterator
-STR_INT_ITERATOR* make_fw_iterator(STR_INT* mom)
+STRINT_ITERATOR* make_fw_iterator(STRINT* mom)
 {
-    STR_INT_ITERATOR* it = (STR_INT_ITERATOR*) malloc(sizeof(STR_INT_ITERATOR));
+    STRINT_ITERATOR* it = (STRINT_ITERATOR*) malloc(sizeof(STRINT_ITERATOR));
     it->mom = mom;
     it->part_it = mom->HEAD_;
     it->data_it = mom->HEAD_->DATA;
@@ -12,9 +12,9 @@ STR_INT_ITERATOR* make_fw_iterator(STR_INT* mom)
     return it;
 }
 
-STR_INT_ITERATOR* make_bw_iterator(STR_INT* mom)
+STRINT_ITERATOR* make_bw_iterator(STRINT* mom)
 {
-    STR_INT_ITERATOR* it = (STR_INT_ITERATOR*) malloc(sizeof(STR_INT_ITERATOR));
+    STRINT_ITERATOR* it = (STRINT_ITERATOR*) malloc(sizeof(STRINT_ITERATOR));
     it->mom = mom;
     it->part_it = mom->TAIL_;
     it->data_it = mom->LAST_+1;
@@ -22,7 +22,7 @@ STR_INT_ITERATOR* make_bw_iterator(STR_INT* mom)
     return it;
 }
 
-void it_reset(STR_INT_ITERATOR* it)
+void it_reset(STRINT_ITERATOR* it)
 {
     if (it->direction_fw)
     {
@@ -36,7 +36,7 @@ void it_reset(STR_INT_ITERATOR* it)
     }
 }
 
-int iterator_fw(STR_INT_ITERATOR* it)
+int iterator_fw(STRINT_ITERATOR* it)
 {
     if (it->data_it == it->mom->LAST_)
     {
@@ -65,7 +65,7 @@ int iterator_fw(STR_INT_ITERATOR* it)
 }
 
 //#define DEBUG
-int iterator_bw(STR_INT_ITERATOR* it)
+int iterator_bw(STRINT_ITERATOR* it)
 {
     if (it->part_it == it->mom->HEAD_ && it->data_it == it->mom->HEAD_->DATA)
     { 
@@ -87,7 +87,7 @@ int iterator_bw(STR_INT_ITERATOR* it)
     return 1;
 }
 //#undef DEBUG
-int next(STR_INT_ITERATOR* it)
+int next(STRINT_ITERATOR* it)
 {
     if (it->direction_fw)
     {
@@ -101,28 +101,28 @@ int next(STR_INT_ITERATOR* it)
     return 1;
 }
 
-char value(STR_INT_ITERATOR* it)
+char it_value(STRINT_ITERATOR* it)
 {
     return *(it->data_it);
 }
 
-void set_value(STR_INT_ITERATOR* it, char cnum)
+void set_it_value(STRINT_ITERATOR* it, char cnum)
 {
     *(it->data_it) = cnum;
 }
 
-void set_it(STR_INT_ITERATOR* ls, STR_INT_ITERATOR* rs)
+void point_it(STRINT_ITERATOR* ls, STRINT_ITERATOR* rs)
 {
     ls->data_it = rs->data_it;
     ls->part_it = rs->part_it;
 }
 
-int it_eq(const STR_INT_ITERATOR* a, const STR_INT_ITERATOR* b)
+int it_eq(const STRINT_ITERATOR* a, const STRINT_ITERATOR* b)
 {
     return a->data_it == b->data_it;
 }
 
-int it_l(const STR_INT_ITERATOR* left, const STR_INT_ITERATOR* right)
+int it_l(const STRINT_ITERATOR* left, const STRINT_ITERATOR* right)
 {
     if (left->mom != right->mom)
     {
@@ -138,13 +138,13 @@ int it_l(const STR_INT_ITERATOR* left, const STR_INT_ITERATOR* right)
     return 1;
 }
 
-int it_leq(const STR_INT_ITERATOR* left, const STR_INT_ITERATOR* right)
+int it_leq(const STRINT_ITERATOR* left, const STRINT_ITERATOR* right)
 {
     return it_eq(left, right) || it_l(left, right);
 }
 
 //#define DEBUG
-void swap_digit(STR_INT_ITERATOR* left, STR_INT_ITERATOR* right)
+void swap_digit(STRINT_ITERATOR* left, STRINT_ITERATOR* right)
 {
 #ifdef DEBUG
     printf("swapping %c and %c\n", to_symbol(*(left->data_it)), to_symbol(*(right->data_it)));

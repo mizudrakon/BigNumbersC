@@ -13,7 +13,7 @@ void list_nums()
     /*the thing is: we usually need the max_digit which is 15, not the actual base which would be 16
      not sure if I should change the code to enter the actual base...*/
     int b = 10;
-    STR_INT* a = new_str_int(b,5);
+    STRINT* a = new_strint(b,5);
     for (int i = 1; i <= 40; i++)
         printf("max digit for base %d: %c\n", i, max_digit(i));
     printf("list of all numeric characters for base %d:\n",b);
@@ -24,15 +24,15 @@ void list_nums()
     putchar('\n');
 }
 
-void iterator_test(STR_INT* num)
+void iterator_test(STRINT* num)
 {
-    STR_INT_ITERATOR* fw_it = make_fw_iterator(num);
-    STR_INT_ITERATOR* bw_it = make_bw_iterator(num);
+    STRINT_ITERATOR* fw_it = make_fw_iterator(num);
+    STRINT_ITERATOR* bw_it = make_bw_iterator(num);
     if (it_l(fw_it,bw_it))
         printf("LESS OPERATOR WORKS\n");
     else
         printf("LESS OPERATOR DOESN'T WORK!\n");
-    //STR_INT_ITERATOR* bw_it = make_bw_iterator(num);
+    //STRINT_ITERATOR* bw_it = make_bw_iterator(num);
     //MIRRORING loop:
 #ifdef ITERATORS_BASIC
     printf("End is: %c\n",to_symbol(*(num->End->data_it-1)));
@@ -85,18 +85,18 @@ void iterator_test(STR_INT* num)
 void tests(int base, size_t len)
 {
     printf("Tests in base %d, partition length %ld\n",base,len);
-    STR_INT *a = new_str_int(base,len);
-    print_str_int(a,stdout);
+    STRINT *a = new_strint(base,len);
+    print_strint(a,stdout);
     printf("enter number: ");
-    read_num(a, stdin);
+    read_strint(a, stdin);
     printf("enter number: ");
-    STR_INT *b = new_str_int(base,len);
-    read_num(b, stdin);
+    STRINT *b = new_strint(base,len);
+    read_strint(b, stdin);
     printf("regular print: \n");
     printf("a:\n");
-    print_str_int(a,stdout);
+    print_strint(a,stdout);
     printf("\nb:\n");
-    print_str_int(b,stdout);
+    print_strint(b,stdout);
 }
 
 /*  limit - repetitions
@@ -112,98 +112,98 @@ void test_arithmetic()
     char a[] = "A10.txt";
     char b[] = "B10.txt";  
     printf("operating in base: %d\n", BS);
-    int (*func_array[SZ])(STR_INT*,STR_INT*,STR_INT*) = {
+    int (*func_array[SZ])(STRINT*,STRINT*,STRINT*) = {
         &add,
         &subtract
     };
     char signs[SZ] = {'+','-'};
     
-    STR_INT* A = new_str_int(10,5);
+    STRINT* A = new_strint(10,5);
     FILE* fi;
     if ((fi = fopen(a,"r")) != NULL)
     {
-        read_num(A,fi);
+        read_strint(A,fi);
     }
     else 
     {
-        deleteSTR_INT(A);
+        deleteSTRINT(A);
         return;
     }
     if (fclose(fi) == EOF) {
-        deleteSTR_INT(A);
+        deleteSTRINT(A);
         return;
     }
     printf("regular print: \n");
     printf("A:\n");
-    print_str_int(A,stdout);
+    print_strint(A,stdout);
     printf("\n");
 
-    STR_INT* B = new_str_int(10,5);
+    STRINT* B = new_strint(10,5);
     if ((fi = fopen(b,"r")) != NULL)
     {
-        read_num(B,fi);
+        read_strint(B,fi);
     }
     else 
     {
-        deleteSTR_INT(A);
-        deleteSTR_INT(B);
+        deleteSTRINT(A);
+        deleteSTRINT(B);
         return;
     }
     if (fclose(fi) == EOF) {
-        deleteSTR_INT(A);
-        deleteSTR_INT(B);
+        deleteSTRINT(A);
+        deleteSTRINT(B);
         return;
     }
 
-    STR_INT* T = new_str_int(10,5);
+    STRINT* T = new_strint(10,5);
     printf("A: ");
-    print_str_int(A,stdout);
+    print_strint(A,stdout);
     printf("\n");
     printf("B: ");
-    print_str_int(B,stdout);
+    print_strint(B,stdout);
     printf("\n");
     printf("T: ");
-    print_str_int(T,stdout);
+    print_strint(T,stdout);
     printf("\n");
 
     printf("A %c B = T:\n", signs[0]);
     func_array[0](A,B,T);
     printf("A: ");
-    print_str_int(A,stdout);
+    print_strint(A,stdout);
     printf("\n");
     printf("B: ");
-    print_str_int(B,stdout);
+    print_strint(B,stdout);
     printf("\n");
     printf("T: ");
-    print_str_int(T,stdout);
+    print_strint(T,stdout);
     printf("\n");
 
     printf("T %c B = A:\n", signs[1]);
     func_array[1](T,B,A);
     printf("A: ");
-    print_str_int(A,stdout);
+    print_strint(A,stdout);
     printf("\n");
     printf("B: ");
-    print_str_int(B,stdout);
+    print_strint(B,stdout);
     printf("\n");
     printf("T: ");
-    print_str_int(T,stdout);
+    print_strint(T,stdout);
     printf("\n");
 
-    deleteSTR_INT(A);
-    deleteSTR_INT(B);
-    deleteSTR_INT(T);
+    deleteSTRINT(A);
+    deleteSTRINT(B);
+    deleteSTRINT(T);
 }
 
 void print_digits(int base, int range)
 {
     printf("Digits for base %d:\n", base);
-    STR_INT* a = new_str_int(base,5);
+    STRINT* a = new_strint(base,5);
     for (int i = 0; i < range; i++)
     {
         // I need increase and decrease functions
         printf("%d:\n", i);
-        print_str_int(a, stdout);
+        print_strint(a, stdout);
     }
 }
 
@@ -214,14 +214,14 @@ void shift_tests()
         printf("failed opening file\n");
         return;
     } 
-    STR_INT* num = new_str_int(10,5);
-    read_num(num, f);
+    STRINT* num = new_strint(10,5);
+    read_strint(num, f);
     if (fclose(f) == EOF)
     {
         printf("failed closing file\n");
         return;
     }
-    print_str_int(num,stdout);
+    print_strint(num,stdout);
     printf("\n");
     //while(pop_back(num))
     for (int i = 0; i < 4; i++)
@@ -229,10 +229,29 @@ void shift_tests()
     {
         //shift_right(num,3);
         shift_left(num,3);
-        print_str_int(num,stdout);
+        print_strint(num,stdout);
         printf("\nlength: %ld\n", length(num));
     }
-    deleteSTR_INT(num);
+    deleteSTRINT(num);
+}
+
+void mult_test()
+{
+    size_t pt_size = 5;
+    size_t base = 10;
+    STRINT* a = new_strint(base,pt_size);
+    read_strint_file(a,"am.txt");
+    STRINT* b = new_strint(base,pt_size);
+    read_strint_file(b,"bm.txt");
+    STRINT* t = new_strint(base,pt_size);
+    printf("Multiplication test:\n");
+    print_strint(a,stdout);
+    printf("\n");
+    print_strint(b,stdout);
+    printf("\n=\n");
+    mult(a,b,t);
+    print_strint(t,stdout);
+    printf("\n");
 }
 
 int main(void)
@@ -244,5 +263,6 @@ int main(void)
 
     //tests(base,pt_size);
     //test_arithmetic();
-    shift_tests();
+    //shift_tests();
+    mult_test();
 }

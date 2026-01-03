@@ -1,7 +1,7 @@
 #include "str_number.h"
 
 /*appEND_ is special because it pushes num->END_ further, and that's why it needs to call new_si_part*/
-int append(STR_INT* num, char digit)
+int append(STRINT* num, char digit)
 {
 #ifdef DEBUG
     printf("appending %c\n", to_symbol(digit));
@@ -30,7 +30,7 @@ int append(STR_INT* num, char digit)
     return 0;
 }
 
-int insert(STR_INT_ITERATOR* num_it, char digit)
+int insert(STRINT_ITERATOR* num_it, char digit)
 {
     if (it_eq(num_it,num_it->mom->End)) {
         append(num_it->mom, digit);
@@ -44,7 +44,7 @@ int insert(STR_INT_ITERATOR* num_it, char digit)
     return 0;
 }
 
-int pop_back(STR_INT*num)
+int pop_back(STRINT*num)
 {
     if (!iterator_bw(num->End) || length(num) == 1)
     {
@@ -54,7 +54,7 @@ int pop_back(STR_INT*num)
     num->TAIL_LENGTH_--;
     if (num->End->data_it == num->TAIL_->DATA)
     {
-        STR_INT_PART* new_tail = num->TAIL_->PREV;
+        STRINT_PART* new_tail = num->TAIL_->PREV;
         free((void*)num->TAIL_);
         num->TAIL_ = new_tail;
         num->TOTAL_PARTS_--;
@@ -67,12 +67,12 @@ int pop_back(STR_INT*num)
     return 1;
 }
 
-int shift_left(STR_INT* num, size_t shift)
+int shift_left(STRINT* num, size_t shift)
 {
     for (size_t i = 1; i <= shift; i++)
         append(num, 0);
-    STR_INT_ITERATOR* it = make_bw_iterator(num);
-    STR_INT_ITERATOR* prev_it = make_bw_iterator(num);
+    STRINT_ITERATOR* it = make_bw_iterator(num);
+    STRINT_ITERATOR* prev_it = make_bw_iterator(num);
     //bw iterators start pointing at End right after the appended 0, so extra move is necessary
     iterator_bw(prev_it);
     iterator_bw(it);
@@ -88,15 +88,15 @@ int shift_left(STR_INT* num, size_t shift)
     return 1;
 }
 
-int shift_right(STR_INT* num, size_t shift)
+int shift_right(STRINT* num, size_t shift)
 {
     if (length(num) == 1)
     {
         return 0;
     }
 
-    STR_INT_ITERATOR* it = make_fw_iterator(num);
-    STR_INT_ITERATOR* prev_it = make_fw_iterator(num);
+    STRINT_ITERATOR* it = make_fw_iterator(num);
+    STRINT_ITERATOR* prev_it = make_fw_iterator(num);
     for (size_t i = 1; i <= shift; i++)
         iterator_fw(it);
     while (it_l(it,num->End))
@@ -113,10 +113,10 @@ int shift_right(STR_INT* num, size_t shift)
     return 1;
 }
 
-void formated_print_str_int(STR_INT* num, FILE* f, char brk, size_t line_len)//prints a number string to chosen output
+void formated_print_strint(STRINT* num, FILE* f, char brk, size_t line_len)//prints a number string to chosen output
 {
     size_t charCount = 0;
-    STR_INT_ITERATOR* bw_it = make_bw_iterator(num);
+    STRINT_ITERATOR* bw_it = make_bw_iterator(num);
     while (iterator_bw(bw_it))
     {
         putc(to_symbol(*(bw_it->data_it)),f);
@@ -131,11 +131,11 @@ void formated_print_str_int(STR_INT* num, FILE* f, char brk, size_t line_len)//p
 }
 
 //BACKWARD PRINTING is actually just straightforward printing, because we keep the DATA backward
-void backward_print_str_int(STR_INT* num, FILE* f, char brk, size_t line_len)
+void backward_print_strint(STRINT* num, FILE* f, char brk, size_t line_len)
 {
     int fin = 0;
     size_t charCount = 0;
-    for (STR_INT_PART* part_it = num->HEAD_; part_it != NULL; part_it = part_it->NEXT)
+    for (STRINT_PART* part_it = num->HEAD_; part_it != NULL; part_it = part_it->NEXT)
     {   
         if (fin) break;
         for (char* data_it = part_it->DATA; data_it < part_it->DATA + num->PARTSZ_; data_it++)
@@ -156,14 +156,14 @@ void backward_print_str_int(STR_INT* num, FILE* f, char brk, size_t line_len)
     putc(brk,f);
 }
 
-void print_str_int(STR_INT* num, FILE* f)
+void print_strint(STRINT* num, FILE* f)
 {
-    formated_print_str_int(num, f, 0, 0);
+    formated_print_strint(num, f, 0, 0);
 }
 
 
 //READ NUBMER FROM INPUT:
-int read_num(STR_INT* num, FILE* f)
+int read_strint(STRINT* num, FILE* f)
 {
     char c;
     num->TAIL_LENGTH_ = 0;
@@ -193,8 +193,8 @@ int read_num(STR_INT* num, FILE* f)
     //HERE we mirror the elements of the linked arrays of char, so that every number has its lowest digit on 1
 #define MIRROR
 #ifdef MIRROR
-    STR_INT_ITERATOR* fw_it = make_fw_iterator(num);
-    STR_INT_ITERATOR* bw_it = make_bw_iterator(num);
+    STRINT_ITERATOR* fw_it = make_fw_iterator(num);
+    STRINT_ITERATOR* bw_it = make_bw_iterator(num);
     next(bw_it); //bw iterator starts at the End = just after the last element
     while (it_l(fw_it,bw_it))
     {
@@ -208,7 +208,7 @@ int read_num(STR_INT* num, FILE* f)
     return 0;//zero errors
 }
 
-int num_from_string(STR_INT* num, char* text)
+int read_strint_string(STRINT* num, char* text)
 {
     if (length(num) > 1)
     {
@@ -225,4 +225,15 @@ int num_from_string(STR_INT* num, char* text)
     }
     append(num,to_cnum(*text));
     return 1;
+}
+
+int read_strint_file(STRINT* num, char* file_name)
+{
+    FILE* sourcef;
+    if ((sourcef = fopen(file_name,"r")) == NULL)
+    {
+        printf("failed opening file\n");
+        return 0;
+    }
+    return read_strint(num, sourcef);
 }
