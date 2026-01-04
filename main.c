@@ -260,10 +260,10 @@ void mult_test()
         print_strint(b,stdout);
         printf("\n=\n");
         mult(a,b,t);
-        print_strint(t,stdout);
-        printf("\n");
-        print_strint(r,stdout);
-        printf("?\n");
+        //print_strint(r,stdout);
+        //printf("\n");
+        //print_strint(t,stdout);
+        //printf("?\n");
         int test = equal(r,t);
         if (test)
             printf("good\n");

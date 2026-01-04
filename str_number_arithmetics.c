@@ -213,16 +213,13 @@ int subtract(STRINT* a, STRINT* b, STRINT* target)
     return 0;
 }
 
+
 int mult(STRINT* a, STRINT* b, STRINT* target)
 {
     if (base_not_eq(a,b) || base_not_eq(a,target)) 
         return 1;
     //forward iterators for a,b
-    STRINT* t;
-    if (identical(a,target) || identical(b,target))
-        t = new_strint(target->BASE_,target->PARTSZ_);
-    else
-        t = target;
+    STRINT* t = new_strint(target->BASE_,target->PARTSZ_);
     STRINT_ITERATOR* a_it = make_fw_iterator(a);
     STRINT_ITERATOR* b_it = make_fw_iterator(b);
     //we can't use a or b as targets even if they are intended as such
@@ -257,11 +254,23 @@ int mult(STRINT* a, STRINT* b, STRINT* target)
         iterator_fw(start_p);
         iterator_fw(b_it);
     }
-    if (identical(a,target) || identical(b,target))
-    {
-        deleteSTRINT(target);
-        target = t;
-    }
+    //cleanup
+    /*
+    free((void*)a_it);
+    free((void*)b_it);
+    free((void*)t_it);
+    free((void*)start_p);
+    */
+    printf("printing target:\n");
+    print_strint(target,stdout);
+    printf("\nprinting t:\n");
+    print_strint(t,stdout);
+    printf("\n");
+
+    //deleteSTRINT(target);
+    target = t;
+    printf("printing target after switch:\n");
+    print_strint(target,stdout);
     return 0;
 }
 
