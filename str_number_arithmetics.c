@@ -17,20 +17,24 @@ int equal(STRINT* left, STRINT* right)
 {
     if (identical(left,right))
         return 1;
-    STRINT_ITERATOR* left_it = make_fw_iterator(left);
-    STRINT_ITERATOR* right_it = make_fw_iterator(right);
+    if (length(left) != length(right))
+        return 0;
+    STRINT_ITERATOR* left_it = make_bw_iterator(left);
+    STRINT_ITERATOR* right_it = make_bw_iterator(right);
+    iterator_bw(left_it);
+    iterator_bw(right_it);
     int mark = 1;
-    while (it_eq(left_it,left->End))
+    while (!it_eq(left_it,left->Begin))
     {
-        if (it_value(left_it) != it_value(right_it) || it_eq(right_it,right->End))
+        if (it_value(left_it) != it_value(right_it))
         {
             mark = 0;
             break;
         }
-        iterator_fw(left_it);
-        iterator_fw(right_it);
+        iterator_bw(left_it);
+        iterator_bw(right_it);
     }
-    if (it_eq(right_it, right->End))
+    if (it_value(left_it) != it_value(right_it))
         mark = 0;
     
     free((void*)left_it);
@@ -225,9 +229,9 @@ int mult(STRINT* a, STRINT* b, STRINT* target)
     STRINT_ITERATOR* t_it = make_fw_iterator(t);
     STRINT_ITERATOR* start_p = make_fw_iterator(t);
     char h = 0;
-    char overfl = 0;
     while (it_l(b_it,b->End))
     {
+        char overfl = 0;
         point_it(t_it,start_p);
         while (it_l(a_it, a->End))
         {
@@ -238,23 +242,21 @@ int mult(STRINT* a, STRINT* b, STRINT* target)
                 t_it->data_it = t->LAST_;
                 t_it->part_it = t->TAIL_;
             }
-            h = it_value(t_it)+it_value(a_it)*it_value(b_it);
+            h = it_value(t_it)+it_value(a_it)*it_value(b_it)+overfl;
             overfl = h / target->BASE_;
             h %= target->BASE_;
             set_it_value(t_it,h);
             iterator_fw(a_it);
             iterator_fw(t_it);
         }
+        if (overfl)
+        {
+            append(t,overfl);
+        }
         it_reset(a_it);
         iterator_fw(start_p);
         iterator_fw(b_it);
     }
-    if (overfl)
-    {
-        append(t,0);
-        *t->LAST_ = overfl; 
-    }
-
     if (identical(a,target) || identical(b,target))
     {
         deleteSTRINT(target);
