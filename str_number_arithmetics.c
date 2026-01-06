@@ -42,6 +42,20 @@ int equal(STRINT* left, STRINT* right)
     return mark;
 }
 
+int is_zero(STRINT* num)
+{
+    if (it_value(num->Begin) == 0 && length(num) == 1)
+        return 1;
+    return 0;
+}
+
+int is_one(STRINT* num)
+{
+    if (it_value(num->Begin) == 1 && length(num) == 1)
+        return 1;
+    return 0;
+}
+
 STRINT_ITERATOR* target_setup(STRINT_ITERATOR* a_it, STRINT_ITERATOR* b_it, STRINT* target){
     if (identical(a_it->mom, target)){
         return a_it;
@@ -198,14 +212,6 @@ int subtract(STRINT* a, STRINT* b, STRINT* target)
     printf("target after cutting: ");
     print_strint(target,stdout);
     printf("\n");
-    //printf("Where is the END and LAST?\n");
-    //printf("End: %d LAST: %d\n",*target->End->data_it,*target->LAST_);
-    //iterator_bw(t_it);
-    //printf("t_it: %d\n", *t_it->data_it);
-    //deallocation:
-    //if (!it_eq(a_it, t_it) && !it_eq(b_it, t_it))
-    //    free((void*)t_it);
-    //printf("all done, let's free memory\n");
 #endif
     free((void*)a_it);
     free((void*)b_it);
@@ -213,36 +219,72 @@ int subtract(STRINT* a, STRINT* b, STRINT* target)
     return 0;
 }
 
-
 int mult(STRINT* a, STRINT* b, STRINT* target)
 {
+    // incompatible base -> just stop
     if (base_not_eq(a,b) || base_not_eq(a,target)) 
         return 1;
+    // trivial cases: 0,1 
+    if (is_zero(a) || is_zero(b))
+    {
+        reset_strint(target);
+        return 0;
+    }
+    if (is_one(a) || is_one(b))
+    {
+        copy_strint(is_one(a) ? b : a,target);
+        return 0;
+    }
+    
+    // NON-trivial cases:
+    // setup
+    STRINT* t;
+    if (identical(a,target) || identical(b,target))
+    {
+        printf("target is identical to a or b\n");
+        t = new_strint(target->BASE_,target->PARTSZ_);
+    } 
+    else if (!is_zero(target))
+    {
+        printf("target isn't empty, deleting and assigning\n");
+        reset_strint(target);
+        t = target;
+    }
+    else
+    {
+        printf("t assigned to target\n");
+        t = target;
+    }
     //forward iterators for a,b
-    STRINT* t = new_strint(target->BASE_,target->PARTSZ_);
     STRINT_ITERATOR* a_it = make_fw_iterator(a);
     STRINT_ITERATOR* b_it = make_fw_iterator(b);
     //we can't use a or b as targets even if they are intended as such
+    
+    // t will be the placeholder target for the calculation
+    // 2 forward iterators for t
+    // start_p(ointer) tells us where adding the next "line" of calculation should start
     STRINT_ITERATOR* t_it = make_fw_iterator(t);
     STRINT_ITERATOR* start_p = make_fw_iterator(t);
-    char h = 0;
-    while (it_l(b_it,b->End))
+    
+    // calculation:
+    char temp = 0;
+    while (it_l(b_it,b->End)) // it_l[ess](left,right): left < right
     {
         char overfl = 0;
-        point_it(t_it,start_p);
+        point_it(t_it,start_p); // t_it always starts at start_p
         while (it_l(a_it, a->End))
         {
             //multiply and add to t
-            if (it_eq(t_it,target->End))
+            if (it_eq(t_it,t->End))
             {
-                append(t,0);
+                append(t,0); //append adds element as LAST_, and moves End right after it 
                 t_it->data_it = t->LAST_;
                 t_it->part_it = t->TAIL_;
             }
-            h = it_value(t_it)+it_value(a_it)*it_value(b_it)+overfl;
-            overfl = h / target->BASE_;
-            h %= target->BASE_;
-            set_it_value(t_it,h);
+            temp = it_value(t_it)+it_value(a_it)*it_value(b_it)+overfl;
+            overfl = temp / t->BASE_;
+            temp %= t->BASE_;
+            set_it_value(t_it,temp);
             iterator_fw(a_it);
             iterator_fw(t_it);
         }
@@ -255,22 +297,27 @@ int mult(STRINT* a, STRINT* b, STRINT* target)
         iterator_fw(b_it);
     }
     //cleanup
-    /*
     free((void*)a_it);
     free((void*)b_it);
     free((void*)t_it);
     free((void*)start_p);
-    */
+    /*
     printf("printing target:\n");
     print_strint(target,stdout);
     printf("\nprinting t:\n");
     print_strint(t,stdout);
     printf("\n");
-
-    //deleteSTRINT(target);
-    target = t;
+    */
+    if (!identical(t,target))
+    {
+        //printf("t and target not identical, switching\n");
+        move_strint(target,t);
+    }
+    /*
     printf("printing target after switch:\n");
     print_strint(target,stdout);
+    printf("\n\n");
+    */
     return 0;
 }
 

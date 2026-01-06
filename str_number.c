@@ -59,12 +59,58 @@ STRINT* new_strint(char base, size_t part_len)
     return strnum;
 }
 
-void reset(STRINT* num)
+void reset_strint(STRINT* num)
 {
     char base = num->BASE_;
     size_t partsz = num->PARTSZ_;
     deleteSTRINT(num);
     num = new_strint(base,partsz);
+}
+
+void delete_strint_data(STRINT* corpse)
+{
+    STRINT_PART* part_it = corpse->HEAD_;
+    for (; part_it != NULL; part_it = part_it->NEXT)
+    {
+        free((void*)part_it->DATA);
+        if (part_it->PREV!=NULL)
+            free((void*)part_it->PREV);
+    }
+    free((void*)part_it);
+}
+
+void move_strint(STRINT* source, STRINT* target)
+{
+    source->BASE_ = target->BASE_;
+    source->SIGN = target->SIGN;
+    delete_strint_data(source);
+    
+    source->TOTAL_PARTS_ = target->TOTAL_PARTS_;
+    source->PARTSZ_ = target->PARTSZ_;
+    source->TAIL_LENGTH_ = target->TAIL_LENGTH_;
+    
+    source->HEAD_ = target->HEAD_;
+    source->TAIL_ = target->TAIL_;
+    
+    point_it(source->Begin,target->Begin);
+    point_it(source->End,target->End);
+    source->LAST_ = target->LAST_;
+}
+
+void copy_strint(STRINT* source, STRINT* target)
+{
+    if (!is_zero(target))
+    {
+        reset_strint(target);
+    }
+    source->BASE_ = target->BASE_;
+    source->SIGN = target->SIGN;
+    STRINT_ITERATOR* source_it = make_fw_iterator(source);
+    set_it_value(target->Begin,it_value(source_it));
+    while (iterator_fw(source_it))
+    {
+        append(target,it_value(source_it));
+    }
 }
 
 //#define DEBUG
@@ -79,17 +125,10 @@ void deleteSTRINT(STRINT* corpse)
 #ifdef DEBUG
     printf("deleted STRINT Begin and End iterators\n");
 #endif
-    STRINT_PART* part_it = corpse->HEAD_;
-    for (; part_it != NULL; part_it = part_it->NEXT)
-    {
-        free((void*)part_it->DATA);
-        if (part_it->PREV!=NULL)
-            free((void*)part_it->PREV);
-    }
+    delete_strint_data(corpse);
 #ifdef DEBUG
     printf("deleted STRINT data\n");
 #endif
-    free((void*)part_it);
     free((void*)corpse);
 
 #ifdef DEBUG

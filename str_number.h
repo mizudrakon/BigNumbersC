@@ -49,7 +49,11 @@ STRINT* new_strint(char base, size_t part_len);
 //STRINT* new_strint(size_t base_num, size_t part_len);
 /*creating a new handle for a number*/
 
-void reset(STRINT* num);
+void reset_strint(STRINT* num);
+
+void move_strint(STRINT* source, STRINT* target);
+
+void copy_strint(STRINT* source, STRINT* target);
 
 void deleteSTRINT(STRINT* corpse);
 /*cleaning function to free the memory*/
@@ -163,6 +167,10 @@ size_t length(STRINT* num);
 int identical(STRINT* left, STRINT* right);
 
 int equal(STRINT* left, STRINT* right);
+
+int is_zero(STRINT* num);
+
+int is_one(STRINT* num);
 
 int add(STRINT* a, STRINT* b, STRINT* target);
 // target = a + b, success return 0, error return 1

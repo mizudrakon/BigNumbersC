@@ -212,7 +212,7 @@ int read_strint_string(STRINT* num, char* text)
 {
     if (length(num) > 1)
     {
-        reset(num);
+        reset_strint(num);
     }
     size_t size = 0;
     char *c = text;

@@ -254,17 +254,17 @@ void mult_test()
         STRINT* r = new_strint(base,pt_size);
         read_strint(r,f);
         STRINT* t = new_strint(base,pt_size);
-
+        STRINT* t_p = b;
         print_strint(a,stdout);
         printf("\n");
         print_strint(b,stdout);
         printf("\n=\n");
-        mult(a,b,t);
-        //print_strint(r,stdout);
-        //printf("\n");
-        //print_strint(t,stdout);
-        //printf("?\n");
-        int test = equal(r,t);
+        mult(a,b,t_p);
+        print_strint(r,stdout);
+        printf("\n");
+        print_strint(t_p,stdout);
+        printf("?\n");
+        int test = equal(r,t_p);
         if (test)
             printf("good\n");
         
@@ -283,6 +283,7 @@ void mult_test()
 
 int main(void)
 {
+//#define SETBASE
 #ifdef SETBASE
     size_t pt_size = 5;
     size_t base = 16;
@@ -292,4 +293,15 @@ int main(void)
     //test_arithmetic();
     //shift_tests();
     mult_test();
+    /*
+    STRINT* a = new_strint(base, pt_size); 
+    STRINT* b = new_strint(base,pt_size);
+    read_strint_string(a,"123456789abc");
+    read_strint_string(b,"123456789");
+    deleteSTRINT(b);
+    b = a;
+    print_strint(b,stdout);
+    printf("\n");
+    deleteSTRINT(b);
+    */
 }
