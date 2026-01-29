@@ -258,10 +258,10 @@ void mult_test()
         print_strint(a,stdout);
         printf("\n");
         print_strint(b,stdout);
-        printf("\n=\n");
+        printf("\n=\nresult:\n");
         mult(a,b,t_p);
         print_strint(r,stdout);
-        printf("\n");
+        printf("\nis equal to:\n");
         print_strint(t_p,stdout);
         printf("?\n");
         int test = equal(r,t_p);

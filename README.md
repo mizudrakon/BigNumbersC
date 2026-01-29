@@ -17,21 +17,19 @@
 - Can read numbers of different base, and write them  
 - Adding two numbers together, either into a new thrid one or rewriting one of the two str_int_add(a,b,target)  
 - Subtracting str_int_minu(a,b,target) means a - b = target.
+- Multiplication seems to work, but it's the simple brute-force one
 
 ## To Do
 
-- shift left and right (which is mostly useful in multiplication)
-- arithmetics: multiplication and difision... that might be it
-- subtraction might need more debugging, there are two functions: append, insert that are used to enter the resulting digit into the target... it's not vary efficient or readable, probably could be merged into a single function. insert() actually can append already... anyway, it works for now.
+- arithmetics: division, multiplication might need more debugging
+- want to do something better with multiplication (Karacuba)
 
 ## Additional info
 
-- str_num folder contains an Obsidian canvas somewhat illustrating the function
-- some new functions haven't been added to the h file, since they're not intended for use in any application. I might want to remove some more of them, but I also like the h file to be a sort of docummentation file... it's a pickle.
+- str_num folder (should) contains (but it's outdated) an Obsidian canvas somewhat illustrating the function
 
 ## last changes
 
-- defined identical(a,b)
-- defined equal(a,b)
-- changed read_num to use iteraor struct
-- NOT TESTED
+## last issues
+
+- equal() fails a test by giving a false negative, need to figure out why
