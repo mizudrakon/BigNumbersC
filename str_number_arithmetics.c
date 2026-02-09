@@ -321,6 +321,14 @@ int mult(STRINT* a, STRINT* b, STRINT* target)
     return 0;
 }
 
+int divide(STRINT* a, STRINT* b, STRINT* target)
+{
+    // compare lengths k = len(a) - len(b), base^k * b >= a >= base^(k-1) * b
+    // compere the most significant digits to decide if > or <
+    // shift b and start adding and counting until b > a
+    return 1;
+}
+
 /*
 void convert(STRINT* num, char new_base)
 {
