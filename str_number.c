@@ -97,7 +97,20 @@ void move_strint(STRINT* source, STRINT* target)
     source->LAST_ = target->LAST_;
 }
 
-void copy_strint(STRINT* source, STRINT* target)
+STRINT* copy_strint(STRINT* source)
+{
+    STRINT* copy = new_strint(source->BASE_, source->PARTSZ_);
+    STRINT_ITERATOR* source_it = make_fw_iterator(source);
+    set_it_value(copy->Begin,it_value(source_it));
+    while (iterator_fw(source_it))
+    {
+        append(copy,it_value(source_it));
+    }
+    free((void*)source_it);
+    return copy;
+}
+
+void copy_strint_to(STRINT* source, STRINT* target)
 {
     if (!is_zero(target))
     {
@@ -111,6 +124,7 @@ void copy_strint(STRINT* source, STRINT* target)
     {
         append(target,it_value(source_it));
     }
+    free((void*)source_it);
 }
 
 //#define DEBUG

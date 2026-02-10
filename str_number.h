@@ -53,7 +53,9 @@ void reset_strint(STRINT* num);
 
 void move_strint(STRINT* source, STRINT* target);
 
-void copy_strint(STRINT* source, STRINT* target);
+STRINT* copy_strint(STRINT* source);
+
+void copy_strint_to(STRINT* source, STRINT* target);
 
 void deleteSTRINT(STRINT* corpse);
 /*cleaning function to free the memory*/
@@ -168,25 +170,28 @@ int identical(STRINT* left, STRINT* right);
 
 int equal(STRINT* left, STRINT* right);
 
+int less(STRINT* left, STRINT* right);
+
+int less_eq(STRINT* left, STRINT* right);
+
 int is_zero(STRINT* num);
 
 int is_one(STRINT* num);
 
 int add(STRINT* a, STRINT* b, STRINT* target);
 // target = a + b, success return 0, error return 1
-#define add_to(a,b)(return add(a,b,a))
+#define add_to(a,b)(add(a,b,a))
 
 int subtract(STRINT* a, STRINT* b, STRINT* target);
 // target = a - b, success return 0, error return 1
 // minus as an alias for subtract
-#define minus(a,b,c)(return subtract(a,b,c))
-#define subtract_from(a,b)(return subtract(a,b,a))
+#define subtract_from(a,b)(subtract(a,b,a))
 
 int mult(STRINT* a, STRINT* b, STRINT* target);
-#define times(a,b)(return mult(a,b,a))
+#define times(a,b)(mult(a,b,a))
 
 int divide(STRINT* a, STRINT* b, STRINT* target);
-#define divide(a,b)(return div(a,b,a))
+#define div(a,b)(div(a,b,a))
 //$ARITHEMTICS:
 
 #endif

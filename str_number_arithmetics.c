@@ -42,6 +42,16 @@ int equal(STRINT* left, STRINT* right)
     return mark;
 }
 
+int less(STRINT* left, STRINT* right)
+{
+    return 1;
+}
+
+int less_eq(STRINT* left, STRINT* right)
+{
+    return 1;
+}
+
 int is_zero(STRINT* num)
 {
     if (it_value(num->Begin) == 0 && length(num) == 1)
@@ -232,7 +242,7 @@ int mult(STRINT* a, STRINT* b, STRINT* target)
     }
     if (is_one(a) || is_one(b))
     {
-        copy_strint(is_one(a) ? b : a,target);
+        copy_strint_to(is_one(a) ? b : a,target);
         return 0;
     }
     
@@ -338,7 +348,29 @@ int divide(STRINT* a, STRINT* b, STRINT* target)
     }
     // compare lengths k = len(a) - len(b), base^k * b >= a >= base^(k-1) * b
     size_t k = length(a) - length(b);
-    
+    STRINT* bm = copy_strint(b);
+    STRINT* r = new_strint(b->BASE_,b->PARTSZ_);
+    shift_left(bm,k);
+    shift_left(r,k);
+    if (*b->LAST_ > *a->LAST_)
+    {
+        while (less(a,bm))
+        {
+            subtract_from(bm,b);
+            //
+        }
+    }
+    else 
+    {
+        while (less(bm,a))
+        {
+            add_to(bm,b);
+            //
+        }
+
+    }
+
+
     // compere the most significant digits to decide if > or <
     
     // shift b and start adding and counting until b > a
