@@ -323,8 +323,24 @@ int mult(STRINT* a, STRINT* b, STRINT* target)
 
 int divide(STRINT* a, STRINT* b, STRINT* target)
 {
+    // basic cases
+    if (length(b) > length(a))
+    {
+        reset_strint(target);
+        return 0;
+    }
+    
+    if (equal(a,b))
+    {
+        reset_strint(target);
+        set_it_value(target->Begin,1);
+        return 0;
+    }
     // compare lengths k = len(a) - len(b), base^k * b >= a >= base^(k-1) * b
+    size_t k = length(a) - length(b);
+    
     // compere the most significant digits to decide if > or <
+    
     // shift b and start adding and counting until b > a
     return 1;
 }
