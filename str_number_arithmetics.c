@@ -15,10 +15,17 @@ int identical(STRINT* left, STRINT* right){
 
 int equal(STRINT* left, STRINT* right)
 {
+    printf("testing identity:\n");
     if (identical(left,right))
         return 1;
+    printf("testing length:\n");
+    printf("left: parts: %llu, partsz: %llu, tail: %llu\n",left->TOTAL_PARTS_, left->PARTSZ_, left->TAIL_LENGTH_);
+    printf("right: parts: %llu, partsz: %llu, tail: %llu\n",right->TOTAL_PARTS_, right->PARTSZ_, right->TAIL_LENGTH_);
     if (length(left) != length(right))
+    {
+        printf("inequality: length: %d vs %d\n", length(left), length(right));
         return 0;
+    }
     STRINT_ITERATOR* left_it = make_bw_iterator(left);
     STRINT_ITERATOR* right_it = make_bw_iterator(right);
     iterator_bw(left_it);
@@ -28,6 +35,8 @@ int equal(STRINT* left, STRINT* right)
     {
         if (it_value(left_it) != it_value(right_it))
         {
+            //CHECK1
+            printf("inequality: %c != %c\n",it_value(left_it),it_value(right_it));
             mark = 0;
             break;
         }
@@ -35,7 +44,10 @@ int equal(STRINT* left, STRINT* right)
         iterator_bw(right_it);
     }
     if (it_value(left_it) != it_value(right_it))
+    {
+        printf("inequality: %c != %c\n",it_value(left_it),it_value(right_it));
         mark = 0;
+    }
     
     free((void*)left_it);
     free((void*)right_it);

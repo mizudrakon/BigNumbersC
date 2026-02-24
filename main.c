@@ -256,8 +256,10 @@ void mult_test()
         STRINT* t = new_strint(base,pt_size);
         STRINT* t_p = b;
         print_strint(a,stdout);
+        printf("\nparts: %ld, partsz: %ld, tail: %ld\n",a->TOTAL_PARTS_, a->PARTSZ_, a->TAIL_LENGTH_);
         printf("\n");
         print_strint(b,stdout);
+        printf("\nparts: %ld, partsz: %ld, tail: %ld\n",b->TOTAL_PARTS_, b->PARTSZ_, b->TAIL_LENGTH_);
         printf("\n=\nresult:\n");
         mult(a,b,t_p);
         print_strint(r,stdout);
@@ -265,6 +267,7 @@ void mult_test()
         print_strint(t_p,stdout);
         printf("?\n");
         int test = equal(r,t_p);
+        printf("%d\n", test);
         if (test)
             printf("good\n");
         
