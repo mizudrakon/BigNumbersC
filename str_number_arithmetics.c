@@ -56,6 +56,9 @@ int equal(STRINT* left, STRINT* right)
 
 int less(STRINT* left, STRINT* right)
 {
+    if (length(left) > length(right))
+        return 0;
+    
     return 1;
 }
 
