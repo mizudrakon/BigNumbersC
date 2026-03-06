@@ -29,7 +29,7 @@ typedef struct strint_iterator STRINT_ITERATOR;
 typedef struct strint
 {
     char BASE_;//numeric base of the number
-    char SIGN;
+    int SIGN;
     SIZE_T TOTAL_PARTS_;//number of strint_parts in total
     SIZE_T PARTSZ_;//size of a single part
     SIZE_T TAIL_LENGTH_;//how far is the last part of allocated memory filled
@@ -195,10 +195,14 @@ int add(STRINT* a, STRINT* b, STRINT* target);
 // target = a + b, success return 0, error return 1
 #define add_to(a,b)(add(a,b,a))
 
+int add_cnum(STRINT* num, char cnum);
+
 int subtract(STRINT* a, STRINT* b, STRINT* target);
 // target = a - b, success return 0, error return 1
 // minus as an alias for subtract
 #define subtract_from(a,b)(subtract(a,b,a))
+
+int subtract_cnum(STRINT* num, char cnum);
 
 int mult(STRINT* a, STRINT* b, STRINT* target);
 #define times(a,b)(mult(a,b,a))

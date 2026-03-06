@@ -67,16 +67,16 @@ int pop_back(STRINT*num)
     return 1;
 }
 
-int shift_left(STRINT* num, size_t shift)
+int shift_left(STRINT* num, SIZE_T shift)
 {
-    for (size_t i = 1; i <= shift; i++)
+    for (SIZE_T i = 1; i <= shift; i++)
         append(num, 0);
     STRINT_ITERATOR* it = make_bw_iterator(num);
     STRINT_ITERATOR* prev_it = make_bw_iterator(num);
     //bw iterators start pointing at End right after the appended 0, so extra move is necessary
     iterator_bw(prev_it);
     iterator_bw(it);
-    for (size_t i = 1; i < shift; i++)
+    for (SIZE_T i = 1; i < shift; i++)
         iterator_bw(it);
     while (iterator_bw(it))
     {
@@ -88,7 +88,7 @@ int shift_left(STRINT* num, size_t shift)
     return 1;
 }
 
-int shift_right(STRINT* num, size_t shift)
+int shift_right(STRINT* num, SIZE_T shift)
 {
     if (length(num) == 1)
     {
@@ -97,7 +97,7 @@ int shift_right(STRINT* num, size_t shift)
 
     STRINT_ITERATOR* it = make_fw_iterator(num);
     STRINT_ITERATOR* prev_it = make_fw_iterator(num);
-    for (size_t i = 1; i <= shift; i++)
+    for (SIZE_T i = 1; i <= shift; i++)
         iterator_fw(it);
     while (it_l(it,num->End))
     {
@@ -113,9 +113,9 @@ int shift_right(STRINT* num, size_t shift)
     return 1;
 }
 
-void formated_print_strint(STRINT* num, FILE* f, char brk, size_t line_len)//prints a number string to chosen output
+void formated_print_strint(STRINT* num, FILE* f, char brk, SIZE_T line_len)//prints a number string to chosen output
 {
-    size_t charCount = 0;
+    SIZE_T charCount = 0;
     STRINT_ITERATOR* bw_it = make_bw_iterator(num);
     while (iterator_bw(bw_it))
     {
@@ -131,10 +131,10 @@ void formated_print_strint(STRINT* num, FILE* f, char brk, size_t line_len)//pri
 }
 
 //BACKWARD PRINTING is actually just straightforward printing, because we keep the DATA backward
-void backward_print_strint(STRINT* num, FILE* f, char brk, size_t line_len)
+void backward_print_strint(STRINT* num, FILE* f, char brk, SIZE_T line_len)
 {
     int fin = 0;
-    size_t charCount = 0;
+    SIZE_T charCount = 0;
     for (STRINT_PART* part_it = num->HEAD_; part_it != NULL; part_it = part_it->NEXT)
     {   
         if (fin) break;
@@ -175,6 +175,11 @@ int read_strint(STRINT* num, FILE* f)
     //we need to allow only numbers < base
     //IGNORE white spaces or any possibly separating symbols in front
     c = getc(f);
+    if (c == '-')
+    {
+        num->SIGN = -1;
+        c = getc(f);
+    }
     c = to_cnum(c);
     while (c == 0 || !is_cnum_digit(c, num))//ignore leading zeros
     {
@@ -217,13 +222,18 @@ int read_strint_string(STRINT* num, char* text)
     {
         reset_strint(num);
     }
-    size_t size = 0;
+    SIZE_T size = 0;
     char *c = text;
     while (*c++ != '\0') size++;
     size--;
     *(num->HEAD_->DATA) = to_cnum(text[size--]);
     for (;size >= 1; size--)
     {
+        if (size == 0 && text[size] == '-')
+        {
+            num->SIGN = -1;
+            continue;
+        }
         append(num,to_cnum(text[size]));
     }
     append(num,to_cnum(*text));

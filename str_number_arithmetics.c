@@ -247,6 +247,81 @@ int subtract(STRINT* a, STRINT* b, STRINT* target)
     return 0;
 }
 
+// since SIGN is just a mark, we need a simple add operation.
+int just_add(STRINT* num, char cnum)
+{
+    if (length(num) == 1 && *num->HEAD_->DATA + cnum < num->BASE_)
+    {
+        *num->HEAD_->DATA += cnum;
+        return 1;
+    }
+    STRINT_ITERATOR* num_it = make_fw_iterator(num);
+    
+    char overflow = cnum;
+    while (overflow && !it_eq(num_it,num->End))
+    {
+        char sum = *num_it->data_it + overflow;
+        insert(num_it, sum % num->BASE_);
+        overflow = sum / num->BASE_;
+        iterator_fw(num_it);
+    }
+    free((void*)num_it);
+    return 1;
+}
+
+int add_cnum(STRINT* num, char cnum){
+    if (cnum > num->BASE_ - 1) return 0;
+    
+    if (num->SIGN == -1)
+    {
+        return subtract_cnum(num, cnum);
+    }
+    return just_add(num, cnum);
+}
+
+int subtract_cnum(STRINT* num, char cnum){
+    if (cnum > num->BASE_ - 1) return 0;
+    // if the number is negative, we only need to add cnum to the unsigned value
+    if (num->SIGN == -1)
+    {
+        return just_add(num, cnum);
+    }
+    else
+    {
+        // simple case first before bothering with iterators
+        if (length(num) == 1 && *num->HEAD_->DATA < cnum)
+        {
+            num->SIGN*=-1;
+            char sum = cnum - *num->HEAD_->DATA;
+            *num->HEAD_->DATA = sum;
+            return 1;
+        }
+        char overflow = cnum;
+        STRINT_ITERATOR* num_it = make_fw_iterator(num);
+        while (overflow && !it_eq(num_it,num->End))
+        {
+            char res = it_value(num_it);
+            char new_ovf = 0;
+            if (overflow > res)
+            {
+                res += num->BASE_;
+                new_ovf = 1;
+            }
+            res -= overflow;
+            insert(num_it, res);
+            iterator_fw(num_it);
+            overflow = new_ovf;
+        }
+        free((void*)num_it);
+        // fix length
+        while (*num->TAIL_->DATA == 0 && length(num) > 1)
+        {
+            pop_back(num);
+        }
+    }
+    return 1;
+}
+
 int mult(STRINT* a, STRINT* b, STRINT* target)
 {
     // incompatible base -> just stop
@@ -351,6 +426,8 @@ int mult(STRINT* a, STRINT* b, STRINT* target)
 
 int divide(STRINT* a, STRINT* b, STRINT* target)
 {
+    printf("divide not implemented yet\n");
+    return 1;
     // basic cases
     if (length(b) > length(a))
     {
@@ -366,15 +443,22 @@ int divide(STRINT* a, STRINT* b, STRINT* target)
     }
     // compare lengths k = len(a) - len(b), base^k * b >= a >= base^(k-1) * b
     SIZE_T k = length(a) - length(b);
+    
+    // bm is a copy of b that we apply all the changes we need to figure out the result to
     STRINT* bm = copy_strint(b);
     STRINT* r = new_strint(b->BASE_,b->PARTSZ_);
+    // shifting b copy to the length of a -> equivalent to multiply by base^k
     shift_left(bm,k);
+    // shifting result too, since we technically divided by base^k
     shift_left(r,k);
+
+    // now this is vary brute-force, I'm planning to do something more sophisticated
     if (*b->LAST_ > *a->LAST_)
     {
         while (less(a,bm))
         {
             subtract_from(bm,b);
+            subtract_cnum(r,1);
             //
         }
     }
@@ -383,15 +467,22 @@ int divide(STRINT* a, STRINT* b, STRINT* target)
         while (less(bm,a))
         {
             add_to(bm,b);
+            add_cnum(r,1);
             //
         }
-
     }
 
-
-    // compere the most significant digits to decide if > or <
-    
-    // shift b and start adding and counting until b > a
+    if (less(a,bm))
+    {
+        subtract_from(bm,b);
+        subtract_cnum(r,1);
+    }
+    if (less(bm,a))
+    {
+        add_to(bm,b);
+        add_cnum(r,1);
+    }
+    move_strint(target,r);
     return 1;
 }
 

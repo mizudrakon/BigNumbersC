@@ -59,6 +59,7 @@ STRINT* new_strint(char base, SIZE_T part_len)
     strnum->LAST_ = strnum->HEAD_->DATA;
     strnum->Begin = make_fw_iterator(strnum);
     strnum->End = make_bw_iterator(strnum);
+    strnum->SIGN = 1;
     return strnum;
 }
 
