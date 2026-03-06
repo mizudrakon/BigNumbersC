@@ -82,7 +82,7 @@ void iterator_test(STRINT* num)
     free((void*)bw_it);
 }
 
-void tests(int base, size_t len)
+void tests(int base, SIZE_T len)
 {
     printf("Tests in base %d, partition length %ld\n",base,len);
     STRINT *a = new_strint(base,len);
@@ -235,10 +235,28 @@ void shift_tests()
     deleteSTRINT(num);
 }
 
+void comparison_test(STRINT* a, STRINT* b)
+{
+    switch (compare(a,b))
+    {
+    case -1:
+        printf("a < b\n");
+        break;
+    case 0:
+        printf("a = b\n");
+        break;
+    case 1:
+        printf("a > b\n");
+        break;
+    default:
+        break;
+    }
+}
+
 void mult_test()
 {
-    size_t pt_size = 5;
-    size_t base = 10;
+    SIZE_T pt_size = 5;
+    SIZE_T base = 10;
     FILE* f;
     if ((f = fopen("mult_test.txt","r")) == NULL){
         printf("failed opening file\n");
@@ -255,10 +273,13 @@ void mult_test()
         read_strint(r,f);
         STRINT* t = new_strint(base,pt_size);
         STRINT* t_p = b;
+        printf("\n");
         print_strint(a,stdout);
         printf("\n");
         print_strint(b,stdout);
-        printf("\n=\nresult:\n");
+        printf("\ncomparisons: ");
+        comparison_test(a,b);
+        printf("mult result:\n");
         mult(a,b,t_p);
         print_strint(r,stdout);
         printf("\nis equal to:\n");
@@ -285,8 +306,8 @@ int main(void)
 {
 //#define SETBASE
 #ifdef SETBASE
-    size_t pt_size = 5;
-    size_t base = 16;
+    SIZE_T pt_size = 5;
+    SIZE_T base = 16;
 #endif
 
     //tests(base,pt_size);

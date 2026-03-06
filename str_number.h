@@ -7,9 +7,16 @@
 //basically a supplement for the long-number-kept-as-string class
 /*STRINT_PART is wrapper for a c array with pointers to previous and next
  it also has a pointer to it's mother which is the strint struct defined next*/
+
+ //#define READ_DEBUG
+
+//defining own size_t for hopefully better cross-platform compatibility
+ #define SIZE_T unsigned long
+ //should I use stddef.h?
+
 typedef struct strint_part 
 {
-    size_t PART_NUMBER;//it a kth part in strint::totalParts
+    SIZE_T PART_NUMBER;//it a kth part in strint::totalParts
     struct strint_part* PREV;
     struct strint_part* NEXT;
     struct strint* MOTHER;//pointer to strint struct that collects the overlaying info
@@ -23,9 +30,9 @@ typedef struct strint
 {
     char BASE_;//numeric base of the number
     char SIGN;
-    size_t TOTAL_PARTS_;//number of strint_parts in total
-    size_t PARTSZ_;//size of a single part
-    size_t TAIL_LENGTH_;//how far is the last part of allocated memory filled
+    SIZE_T TOTAL_PARTS_;//number of strint_parts in total
+    SIZE_T PARTSZ_;//size of a single part
+    SIZE_T TAIL_LENGTH_;//how far is the last part of allocated memory filled
     //-> so the length of the whole number is totlaParts * partSz + lastPartLength
     //pointers to first and last part:
     STRINT_PART* HEAD_;
@@ -45,8 +52,8 @@ next = NULL untill we need more space, when it gets allocated and filled by the 
 parts are always added to the strint struct, and it can eitehr become the head AND tail, or the new tail, with the
 old one as its prev*/
 
-STRINT* new_strint(char base, size_t part_len);
-//STRINT* new_strint(size_t base_num, size_t part_len);
+STRINT* new_strint(char base, SIZE_T part_len);
+//STRINT* new_strint(SIZE_T base_num, SIZE_T part_len);
 /*creating a new handle for a number*/
 
 void reset_strint(STRINT* num);
@@ -106,7 +113,7 @@ void swap_digit(STRINT_ITERATOR* left, STRINT_ITERATOR* right);
 //$ITERATOR:
 
 //^HELPFUL FUNCTIONS:
-char max_digit(size_t b);
+char max_digit(SIZE_T b);
 //given a base b, get the char representing the maximum single digit
 
 char to_cnum(char c);
@@ -129,13 +136,13 @@ int pop_back(STRINT* num);
 //removes last element (most significant number)
 
 //shift operations won't be practical in multiplication...
-int shift_left(STRINT* num, size_t shift);
+int shift_left(STRINT* num, SIZE_T shift);
 //operation equivalent to num * base
 
-int shift_right(STRINT* num, size_t shift);
+int shift_right(STRINT* num, SIZE_T shift);
 //operation equivalent to num div base
 
-void formated_print_strint(STRINT* num, FILE* f,char brk, size_t line_len);
+void formated_print_strint(STRINT* num, FILE* f,char brk, SIZE_T line_len);
 //print with possibility of adding new_lines, brk is meant as bool, line len is the required lenght
 //but it might be nice to make brk a separator specifier and get the truth value just for line_len x<=0 being false
 
@@ -158,7 +165,7 @@ int read_strint_file(STRINT* num, char* file_name);
 */
 //$HELPFUL FUNCTIONS:
 
-size_t length(STRINT* num);
+SIZE_T length(STRINT* num);
 
 //^ARITHEMTICS:
 /* FOR ALL BINARY OPERATIONS:
@@ -168,11 +175,17 @@ size_t length(STRINT* num);
  
 int identical(STRINT* left, STRINT* right);
 
+int compare(STRINT* left, STRINT* right);
+
 int equal(STRINT* left, STRINT* right);
 
 int less(STRINT* left, STRINT* right);
 
 int less_eq(STRINT* left, STRINT* right);
+
+int greater(STRINT* left, STRINT* right);
+
+int greater_eq(STRINT* left, STRINT* right);
 
 int is_zero(STRINT* num);
 

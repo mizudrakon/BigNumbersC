@@ -13,43 +13,60 @@ int identical(STRINT* left, STRINT* right){
     return left->HEAD_ == right->HEAD_;
 }
 
-int equal(STRINT* left, STRINT* right)
+int compare(STRINT* left, STRINT* right)
 {
     if (identical(left,right))
-        return 1;
-    if (length(left) != length(right))
         return 0;
+    if (length(left) < length(right))
+        return -1;
+    if (length(left) > length(right))
+        return 1;
+    int result = 0;
     STRINT_ITERATOR* left_it = make_bw_iterator(left);
     STRINT_ITERATOR* right_it = make_bw_iterator(right);
     iterator_bw(left_it);
     iterator_bw(right_it);
-    int mark = 1;
-    while (!it_eq(left_it,left->Begin))
+    while (!it_eq(left_it,left->Begin) && it_value(left_it) == it_value(right_it))
     {
-        if (it_value(left_it) != it_value(right_it))
-        {
-            mark = 0;
-            break;
-        }
         iterator_bw(left_it);
         iterator_bw(right_it);
     }
-    if (it_value(left_it) != it_value(right_it))
-        mark = 0;
-    
+    if (it_value(left_it) < it_value(right_it))
+    {
+        result = -1;
+    }
+    if (it_value(left_it) > it_value(right_it))
+    {
+        result = 1;
+    }
     free((void*)left_it);
     free((void*)right_it);
-    return mark;
+    return result;
+}
+
+int equal(STRINT* left, STRINT* right)
+{
+    return compare(left,right) == 0;
 }
 
 int less(STRINT* left, STRINT* right)
 {
-    return 1;
+    return compare(left,right) == -1;
 }
 
 int less_eq(STRINT* left, STRINT* right)
 {
-    return 1;
+    return compare(left,right) != 1;
+}
+
+int greater(STRINT* left, STRINT* right)
+{
+    return compare(left,right) == 1;
+}
+
+int greater_eq(STRINT* left, STRINT* right)
+{
+    return compare(left,right) != -1; 
 }
 
 int is_zero(STRINT* num)
@@ -347,7 +364,7 @@ int divide(STRINT* a, STRINT* b, STRINT* target)
         return 0;
     }
     // compare lengths k = len(a) - len(b), base^k * b >= a >= base^(k-1) * b
-    size_t k = length(a) - length(b);
+    SIZE_T k = length(a) - length(b);
     STRINT* bm = copy_strint(b);
     STRINT* r = new_strint(b->BASE_,b->PARTSZ_);
     shift_left(bm,k);

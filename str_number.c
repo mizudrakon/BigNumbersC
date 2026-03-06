@@ -23,6 +23,9 @@ int new_si_part(STRINT* mom)
     part->NEXT = NULL;
     mom->TAIL_ = part;
     mom->TOTAL_PARTS_++;//motehr now hes +1 part
+#ifdef READ_DEBUG
+    printf("TOTAL_PARTS_: %lu\n", mom->TOTAL_PARTS_);
+#endif
     part->PART_NUMBER = mom->TOTAL_PARTS_;//the new part's number is the current total n/n
     if ((part->DATA = (char*)malloc(mom->PARTSZ_ * sizeof(char))) == NULL)//allocate storage
     {    printf("strint_part data malloc failed\n"); return 1;}
@@ -30,7 +33,7 @@ int new_si_part(STRINT* mom)
     return 0;//no failure
 }
 
-STRINT* new_strint(char base, size_t part_len)
+STRINT* new_strint(char base, SIZE_T part_len)
 {
     if (base > MAX_POSSIBLE_BASE_)
     {
@@ -62,7 +65,7 @@ STRINT* new_strint(char base, size_t part_len)
 void reset_strint(STRINT* num)
 {
     char base = num->BASE_;
-    size_t partsz = num->PARTSZ_;
+    SIZE_T partsz = num->PARTSZ_;
     deleteSTRINT(num);
     num = new_strint(base,partsz);
 }
@@ -153,14 +156,14 @@ void deleteSTRINT(STRINT* corpse)
 
 //^FUNCTIONS
 
-size_t length(STRINT* num)
+SIZE_T length(STRINT* num)
 {
     return (num->TOTAL_PARTS_ - 1) * num->PARTSZ_ + num->TAIL_LENGTH_;
 }
 
 //we want a useful char from number
 //basically the symbol representing the largest allowed digit 1-9 a(10)-z(36)
-char max_digit(size_t b)
+char max_digit(SIZE_T b)
 {
     if (b <= 9){
         return b + '0' - 1; //the largest digit is one lower then the base 

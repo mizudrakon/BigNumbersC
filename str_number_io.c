@@ -165,6 +165,9 @@ void print_strint(STRINT* num, FILE* f)
 //READ NUBMER FROM INPUT:
 int read_strint(STRINT* num, FILE* f)
 {
+#ifdef READ_DEBUG
+    printf("READING NEW STRINT\n");
+#endif
     char c;
     num->TAIL_LENGTH_ = 0;
     num->LAST_ = num->HEAD_->DATA - 1;
