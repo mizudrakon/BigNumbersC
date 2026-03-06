@@ -15,6 +15,7 @@ int identical(STRINT* left, STRINT* right){
 
 int compare(STRINT* left, STRINT* right)
 {
+    printf("testing identity:\n");
     if (identical(left,right))
         return 0;
     if (length(left) < length(right))

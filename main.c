@@ -275,6 +275,7 @@ void mult_test()
         STRINT* t_p = b;
         printf("\n");
         print_strint(a,stdout);
+        printf("\nparts: %ld, partsz: %ld, tail: %ld\n",a->TOTAL_PARTS_, a->PARTSZ_, a->TAIL_LENGTH_);
         printf("\n");
         print_strint(b,stdout);
         printf("\ncomparisons: ");
@@ -286,6 +287,7 @@ void mult_test()
         print_strint(t_p,stdout);
         printf("?\n");
         int test = equal(r,t_p);
+        printf("%d\n", test);
         if (test)
             printf("good\n");
         
