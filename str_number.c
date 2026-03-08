@@ -47,6 +47,7 @@ STRINT* new_strint(char base, SIZE_T part_len)
     strnum->BASE_ = base;
     strnum->HEAD_ = NULL;
     //create the first part that is both HEAD_ and tail
+    strnum->TOTAL_PARTS_ = 0;
     if (new_si_part(strnum))
     {
         fprintf(stderr, "failed creating a new string_int_part!");

@@ -273,11 +273,12 @@ void mult_test()
         read_strint(r,f);
         STRINT* t = new_strint(base,pt_size);
         STRINT* t_p = b;
-        printf("\n");
+        printf("\na:");
         print_strint(a,stdout);
         printf("\nparts: %ld, partsz: %ld, tail: %ld\n",a->TOTAL_PARTS_, a->PARTSZ_, a->TAIL_LENGTH_);
-        printf("\n");
+        printf("\nb:");
         print_strint(b,stdout);
+        printf("\nparts: %ld, partsz: %ld, tail: %ld\n",b->TOTAL_PARTS_, b->PARTSZ_, b->TAIL_LENGTH_);
         printf("\ncomparisons: ");
         comparison_test(a,b);
         printf("mult result:\n");
@@ -289,7 +290,7 @@ void mult_test()
         int test = equal(r,t_p);
         printf("%d\n", test);
         if (test)
-            printf("good\n");
+            printf("GOOD\n");
         
         deleteSTRINT(a);
         deleteSTRINT(b);
@@ -297,10 +298,11 @@ void mult_test()
         deleteSTRINT(t);
         if (!test)
         {
-            printf("bad\n");
+            printf("BAD\n");
             break;
         }
     }
+    printf("\n");
     fclose(f);
 }
 

@@ -8,7 +8,7 @@
 /*STRINT_PART is wrapper for a c array with pointers to previous and next
  it also has a pointer to it's mother which is the strint struct defined next*/
 
- //#define READ_DEBUG
+//#define READ_DEBUG
 
 //defining own size_t for hopefully better cross-platform compatibility
  #define SIZE_T unsigned long
