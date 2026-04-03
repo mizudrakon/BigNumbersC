@@ -207,7 +207,8 @@ int subtract_cnum(STRINT* num, char cnum);
 int mult(STRINT* a, STRINT* b, STRINT* target);
 #define times(a,b)(mult(a,b,a))
 
-int divide(STRINT* a, STRINT* b, STRINT* target);
+// A-dividend -> And, B-divisor -> Bor
+int divide(STRINT* And, STRINT* Bor, STRINT* target);
 #define div(a,b)(div(a,b,a))
 //$ARITHEMTICS:
 

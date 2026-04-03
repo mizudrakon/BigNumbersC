@@ -424,65 +424,43 @@ int mult(STRINT* a, STRINT* b, STRINT* target)
     return 0;
 }
 
-int divide(STRINT* a, STRINT* b, STRINT* target)
+// I'll try to figure out my own way to do this first, but the plan is to eventually learn better algs
+int divide(STRINT* And, STRINT* Bor, STRINT* target)
 {
     printf("divide not implemented yet\n");
     return 1;
-    // basic cases
-    if (length(b) > length(a))
+// 1. basic cases
+// 1.1. b longer == larger than a -> result 0
+    if (length(Bor) > length(And))
     {
         reset_strint(target);
         return 0;
     }
-    
-    if (equal(a,b))
+// 1.2. equal -> result 1    
+    if (equal(And,Bor))
     {
         reset_strint(target);
         set_it_value(target->Begin,1);
         return 0;
     }
-    // compare lengths k = len(a) - len(b), base^k * b >= a >= base^(k-1) * b
-    SIZE_T k = length(a) - length(b);
+// 2. WE ACTUALLY HAVE TO DO IT
+// 2.1. compare lengths k = len(a) - len(b), base^k * b >= a >= base^(k-1) * b
+    SIZE_T k = length(And) - length(Bor);
     
-    // bm is a copy of b that we apply all the changes we need to figure out the result to
-    STRINT* bm = copy_strint(b);
-    STRINT* r = new_strint(b->BASE_,b->PARTSZ_);
-    // shifting b copy to the length of a -> equivalent to multiply by base^k
-    shift_left(bm,k);
-    // shifting result too, since we technically divided by base^k
-    shift_left(r,k);
-
-    // now this is vary brute-force, I'm planning to do something more sophisticated
-    if (*b->LAST_ > *a->LAST_)
-    {
-        while (less(a,bm))
-        {
-            subtract_from(bm,b);
-            subtract_cnum(r,1);
-            //
-        }
-    }
-    else 
-    {
-        while (less(bm,a))
-        {
-            add_to(bm,b);
-            add_cnum(r,1);
-            //
-        }
-    }
-
-    if (less(a,bm))
-    {
-        subtract_from(bm,b);
-        subtract_cnum(r,1);
-    }
-    if (less(bm,a))
-    {
-        add_to(bm,b);
-        add_cnum(r,1);
-    }
-    move_strint(target,r);
+//      bm is a copy of Bor to transform until it's as close to And as possible 
+    STRINT* Bc = copy_strint(Bor);
+    STRINT* R = new_strint(Bor->BASE_,Bor->PARTSZ_);
+// 2.2  shifting bm copy to the length of And -> equivalent to multiply by base^k
+    shift_left(Bc,k);
+//      shifting result too, since we technically divided by base^k
+    shift_left(R,k);
+// CASES:
+//  Bc_n < A_n
+//      add B-shift_k-1 to Bc until Bc_n >= A_n, if > then -1B=shift_k-1
+//  Bc_n > A_n
+//      add B-shift_k-1 to Bc until Bc_n <= A_n, if < then +1B-shift_k-1
+// basically move to the lowest signifficant digit with this procedure, that's the plan
+    move_strint(target,R);
     return 1;
 }
 
